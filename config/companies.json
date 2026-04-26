@@ -1,0 +1,75 @@
+{
+  "sectors": {
+    "Technology": {
+      "color": "#6366f1",
+      "companies": [
+        {"name": "Apple", "ticker": "AAPL", "aliases": ["Apple Inc", "AAPL", "iPhone maker"]},
+        {"name": "Microsoft", "ticker": "MSFT", "aliases": ["Microsoft Corp", "MSFT", "Azure"]},
+        {"name": "NVIDIA", "ticker": "NVDA", "aliases": ["NVIDIA Corp", "NVDA", "Nvidia"]},
+        {"name": "Alphabet", "ticker": "GOOGL", "aliases": ["Google", "Alphabet Inc", "GOOGL", "GOOG"]},
+        {"name": "Meta", "ticker": "META", "aliases": ["Meta Platforms", "Facebook", "META"]},
+        {"name": "Amazon", "ticker": "AMZN", "aliases": ["Amazon.com", "AWS", "AMZN"]}
+      ]
+    },
+    "Finance": {
+      "color": "#10b981",
+      "companies": [
+        {"name": "JPMorgan Chase", "ticker": "JPM", "aliases": ["JPMorgan", "JP Morgan", "JPM", "Chase"]},
+        {"name": "Goldman Sachs", "ticker": "GS", "aliases": ["Goldman", "Goldman Sachs", "GS"]},
+        {"name": "Bank of America", "ticker": "BAC", "aliases": ["BofA", "Bank of America", "BAC"]},
+        {"name": "Morgan Stanley", "ticker": "MS", "aliases": ["Morgan Stanley", "MS"]},
+        {"name": "Visa", "ticker": "V", "aliases": ["Visa Inc", "VISA"]}
+      ]
+    },
+    "Healthcare": {
+      "color": "#f59e0b",
+      "companies": [
+        {"name": "Johnson & Johnson", "ticker": "JNJ", "aliases": ["J&J", "Johnson and Johnson", "JNJ"]},
+        {"name": "Pfizer", "ticker": "PFE", "aliases": ["Pfizer Inc", "PFE"]},
+        {"name": "UnitedHealth", "ticker": "UNH", "aliases": ["UnitedHealth Group", "UNH", "United Health"]},
+        {"name": "AbbVie", "ticker": "ABBV", "aliases": ["AbbVie Inc", "ABBV"]}
+      ]
+    },
+    "Energy": {
+      "color": "#ef4444",
+      "companies": [
+        {"name": "ExxonMobil", "ticker": "XOM", "aliases": ["Exxon", "ExxonMobil Corp", "XOM"]},
+        {"name": "Chevron", "ticker": "CVX", "aliases": ["Chevron Corp", "CVX"]},
+        {"name": "ConocoPhillips", "ticker": "COP", "aliases": ["ConocoPhillips", "Conoco", "COP"]}
+      ]
+    },
+    "Consumer": {
+      "color": "#8b5cf6",
+      "companies": [
+        {"name": "Walmart", "ticker": "WMT", "aliases": ["Walmart Inc", "WMT"]},
+        {"name": "Costco", "ticker": "COST", "aliases": ["Costco Wholesale", "COST"]},
+        {"name": "McDonald's", "ticker": "MCD", "aliases": ["McDonald's Corp", "McDonalds", "MCD"]},
+        {"name": "Tesla", "ticker": "TSLA", "aliases": ["Tesla Inc", "TSLA", "Tesla Motors"]}
+      ]
+    },
+    "Industrials": {
+      "color": "#06b6d4",
+      "companies": [
+        {"name": "Caterpillar", "ticker": "CAT", "aliases": ["Caterpillar Inc", "CAT"]},
+        {"name": "Boeing", "ticker": "BA", "aliases": ["Boeing Co", "BA"]},
+        {"name": "GE Aerospace", "ticker": "GE", "aliases": ["General Electric", "GE Aerospace", "GE"]}
+      ]
+    },
+    "Telecom": {
+      "color": "#84cc16",
+      "companies": [
+        {"name": "AT&T", "ticker": "T", "aliases": ["AT&T Inc", "ATT"]},
+        {"name": "Verizon", "ticker": "VZ", "aliases": ["Verizon Communications", "VZ"]},
+        {"name": "Netflix", "ticker": "NFLX", "aliases": ["Netflix Inc", "NFLX"]}
+      ]
+    },
+    "Materials": {
+      "color": "#f97316",
+      "companies": [
+        {"name": "Linde", "ticker": "LIN", "aliases": ["Linde PLC", "LIN"]},
+        {"name": "Newmont", "ticker": "NEM", "aliases": ["Newmont Corp", "NEM"]},
+        {"name": "Freeport-McMoRan", "ticker": "FCX", "aliases": ["Freeport", "FCX"]}
+      ]
+    }
+  }
+}

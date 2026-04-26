@@ -1,0 +1,242 @@
+[
+  {
+    "url": "https://finance.yahoo.com/news/rssindex",
+    "source": "Yahoo Finance",
+    "category": "general"
+  },
+  {
+    "url": "https://finance.yahoo.com/rss/topfinstories",
+    "source": "Yahoo Finance Top",
+    "category": "general"
+  },
+  {
+    "url": "https://seekingalpha.com/feed.xml",
+    "source": "Seeking Alpha",
+    "category": "investing"
+  },
+  {
+    "url": "https://www.cnbc.com/id/100003114/device/rss/rss.html",
+    "source": "CNBC Business",
+    "category": "general"
+  },
+  {
+    "url": "https://www.cnbc.com/id/10000664/device/rss/rss.html",
+    "source": "CNBC Tech",
+    "category": "tech"
+  },
+  {
+    "url": "https://www.cnbc.com/id/10001147/device/rss/rss.html",
+    "source": "CNBC Finance",
+    "category": "finance"
+  },
+  {
+    "url": "https://www.cnbc.com/id/15839069/device/rss/rss.html",
+    "source": "CNBC US News",
+    "category": "general"
+  },
+  {
+    "url": "https://feeds.marketwatch.com/marketwatch/topstories/",
+    "source": "MarketWatch Top",
+    "category": "general"
+  },
+  {
+    "url": "https://feeds.marketwatch.com/marketwatch/marketpulse/",
+    "source": "MarketWatch Pulse",
+    "category": "general"
+  },
+  {
+    "url": "https://feeds.bloomberg.com/markets/news.rss",
+    "source": "Bloomberg Markets",
+    "category": "general"
+  },
+  {
+    "url": "https://feeds.bloomberg.com/technology/news.rss",
+    "source": "Bloomberg Tech",
+    "category": "tech"
+  },
+  {
+    "url": "https://feeds.bloomberg.com/politics/news.rss",
+    "source": "Bloomberg Politics",
+    "category": "macro"
+  },
+  {
+    "url": "https://www.ft.com/rss/home",
+    "source": "Financial Times",
+    "category": "general"
+  },
+  {
+    "url": "https://www.businessinsider.com/rss",
+    "source": "Business Insider",
+    "category": "general"
+  },
+  {
+    "url": "https://techcrunch.com/feed/",
+    "source": "TechCrunch",
+    "category": "tech"
+  },
+  {
+    "url": "https://www.theverge.com/rss/index.xml",
+    "source": "The Verge",
+    "category": "tech"
+  },
+  {
+    "url": "https://feeds.arstechnica.com/arstechnica/index/",
+    "source": "Ars Technica",
+    "category": "tech"
+  },
+  {
+    "url": "https://www.economist.com/finance-and-economics/rss.xml",
+    "source": "The Economist Finance",
+    "category": "macro"
+  },
+  {
+    "url": "https://www.economist.com/business/rss.xml",
+    "source": "The Economist Business",
+    "category": "general"
+  },
+  {
+    "url": "https://www.morningstar.com/rss/articles.xml",
+    "source": "Morningstar",
+    "category": "investing"
+  },
+  {
+    "url": "https://feeds.feedburner.com/zerohedge/feed",
+    "source": "Zero Hedge",
+    "category": "macro"
+  },
+  {
+    "url": "https://www.valuewalk.com/feed/",
+    "source": "ValueWalk",
+    "category": "investing"
+  },
+  {
+    "url": "https://www.prnewswire.com/rss/news-releases-list.rss",
+    "source": "PR Newswire",
+    "category": "corporate"
+  },
+  {
+    "url": "https://globenewswire.com/RssFeed/industry/9500",
+    "source": "Globe Newswire Finance",
+    "category": "corporate"
+  },
+  {
+    "url": "https://globenewswire.com/RssFeed/industry/7500",
+    "source": "Globe Newswire Tech",
+    "category": "corporate"
+  },
+  {
+    "url": "https://globenewswire.com/RssFeed/industry/5700",
+    "source": "Globe Newswire Healthcare",
+    "category": "healthcare"
+  },
+  {
+    "url": "https://globenewswire.com/RssFeed/industry/2200",
+    "source": "Globe Newswire Energy",
+    "category": "energy"
+  },
+  {
+    "url": "https://globenewswire.com/RssFeed/industry/8600",
+    "source": "Globe Newswire Industrials",
+    "category": "industrials"
+  },
+  {
+    "url": "https://feeds.a.dj.com/rss/RSSWSJD.xml",
+    "source": "Dow Jones",
+    "category": "general"
+  },
+  {
+    "url": "https://feeds.content.dowjones.io/public/rss/mw_topstories",
+    "source": "Dow Jones Top Stories",
+    "category": "general"
+  },
+  {
+    "url": "https://www.ibtimes.com/rss",
+    "source": "International Business Times",
+    "category": "general"
+  },
+  {
+    "url": "https://feeds.reuters.com/reuters/businessNews.rss",
+    "source": "Reuters Business",
+    "category": "general"
+  },
+  {
+    "url": "https://feeds.reuters.com/reuters/technologyNews.rss",
+    "source": "Reuters Tech",
+    "category": "tech"
+  },
+  {
+    "url": "https://feeds.reuters.com/reuters/health.rss",
+    "source": "Reuters Health",
+    "category": "healthcare"
+  },
+  {
+    "url": "https://feeds.apnews.com/rss/apf-business",
+    "source": "AP Business",
+    "category": "general"
+  },
+  {
+    "url": "https://feeds.apnews.com/rss/apf-technology",
+    "source": "AP Technology",
+    "category": "tech"
+  },
+  {
+    "url": "https://feeds.apnews.com/rss/apf-finance",
+    "source": "AP Finance",
+    "category": "finance"
+  },
+  {
+    "url": "https://feeds.apnews.com/rss/apf-health",
+    "source": "AP Health",
+    "category": "healthcare"
+  },
+  {
+    "url": "https://feeds.npr.org/1017/rss.xml",
+    "source": "NPR Economy",
+    "category": "macro"
+  },
+  {
+    "url": "https://feeds.npr.org/1006/rss.xml",
+    "source": "NPR Business",
+    "category": "general"
+  },
+  {
+    "url": "https://www.theguardian.com/business/rss",
+    "source": "Guardian Business",
+    "category": "general"
+  },
+  {
+    "url": "https://www.theguardian.com/technology/rss",
+    "source": "Guardian Tech",
+    "category": "tech"
+  },
+  {
+    "url": "https://www.theguardian.com/environment/energy/rss",
+    "source": "Guardian Energy",
+    "category": "energy"
+  },
+  {
+    "url": "https://fortune.com/feed/",
+    "source": "Fortune",
+    "category": "general"
+  },
+  {
+    "url": "https://www.fastcompany.com/technology/rss",
+    "source": "Fast Company Tech",
+    "category": "tech"
+  },
+  {
+    "url": "https://www.wired.com/feed/category/business/latest/rss",
+    "source": "Wired Business",
+    "category": "tech"
+  },
+  {
+    "url": "https://www.technologyreview.com/feed/",
+    "source": "MIT Tech Review",
+    "category": "tech"
+  },
+  {
+    "url": "https://www.coindesk.com/arc/outboundfeeds/rss/",
+    "source": "CoinDesk",
+    "category": "finance"
+  }
+]
