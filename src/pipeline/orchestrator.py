@@ -20,7 +20,29 @@ logger = logging.getLogger(__name__)
 
 MODEL = "llama-3.3-70b-versatile"
 MAX_RETRIES = 3
-RETRY_DELAY = 1.5
+RETRY_DELAY = 2.0
+
+SECTORS = ["Technology", "Finance", "Healthcare", "Energy", "Consumer", "Industrials", "Telecom", "Materials"]
+
+# Single combined prompt — 1 API call per article instead of 3
+COMBINED_SYSTEM = f"""You are a financial NLP analyst. Given a news article or post, perform three tasks in one response.
+
+Return ONLY a valid JSON object in exactly this format:
+{{
+  "entities": ["Company A", "Company B"],
+  "sectors": ["Technology", "Finance"],
+  "scores": {{
+    "Company A": {{"score": 0.75, "label": "positive", "signal": "earnings beat", "confidence": 0.9}},
+    "Company B": {{"score": -0.4, "label": "negative", "signal": "regulatory risk", "confidence": 0.7}}
+  }}
+}}
+
+Rules:
+- entities: canonical names of publicly traded companies mentioned (e.g. "Apple" not "AAPL"). Empty list if none.
+- sectors: from this list only — {', '.join(SECTORS)}. Most relevant first. Empty list if none apply.
+- scores: sentiment per entity. score is -1.0 (very bearish) to 1.0 (very bullish). label is positive/negative/neutral. signal is 2-4 words. confidence is 0.0-1.0.
+- If no entities, scores must be {{}}
+- No explanation, no markdown, no extra text. Only the JSON object."""
 
 
 def _groq_client() -> Groq:
@@ -30,24 +52,29 @@ def _groq_client() -> Groq:
     return Groq(api_key=api_key)
 
 
-def _call_groq(client: Groq, prompt: str, system: str) -> str:
-    """Call Groq with retries on rate limit."""
+def _call_groq(client: Groq, text: str) -> str:
+    """Single combined API call with retry on rate limit."""
+    prompt = f"Article text: {text[:700]}"
     for attempt in range(MAX_RETRIES):
         try:
             response = client.chat.completions.create(
                 model=MODEL,
                 messages=[
-                    {"role": "system", "content": system},
+                    {"role": "system", "content": COMBINED_SYSTEM},
                     {"role": "user", "content": prompt},
                 ],
                 temperature=0.1,
-                max_tokens=512,
+                max_tokens=400,
             )
             return response.choices[0].message.content.strip()
         except Exception as e:
-            if "rate_limit" in str(e).lower() and attempt < MAX_RETRIES - 1:
-                logger.warning("Rate limit hit, retrying in %ss...", RETRY_DELAY)
-                time.sleep(RETRY_DELAY * (attempt + 1))
+            err = str(e).lower()
+            if "rate_limit" in err and "tokens per day" in err:
+                raise  # Daily limit — no point retrying
+            if "rate_limit" in err and attempt < MAX_RETRIES - 1:
+                wait = RETRY_DELAY * (attempt + 1)
+                logger.warning("Rate limit hit, retrying in %ss...", wait)
+                time.sleep(wait)
             else:
                 raise
     return ""
@@ -55,144 +82,41 @@ def _call_groq(client: Groq, prompt: str, system: str) -> str:
 
 def _parse_json_response(raw: str) -> Any:
     """Safely extract JSON from model output."""
-    # Strip markdown fences if present
     clean = re.sub(r"```(?:json)?|```", "", raw).strip()
-    # Find JSON object or array
-    match = re.search(r"(\{.*\}|\[.*\])", clean, re.DOTALL)
+    match = re.search(r"\{.*\}", clean, re.DOTALL)
     if match:
-        return json.loads(match.group(1))
+        return json.loads(match.group(0))
     return json.loads(clean)
 
 
-# ──────────────────────────────────────────────
-# Stage 1: Named Entity Recognition
-# ──────────────────────────────────────────────
+def _validate_result(result: dict) -> tuple[list, list, dict]:
+    """Validate and sanitize pipeline output."""
+    entities = [str(e).strip() for e in result.get("entities", []) if e]
 
-NER_SYSTEM = """You are a financial NER system. Extract company names from text.
-Return ONLY a JSON object: {"entities": ["Company A", "Company B"]}
-Rules:
-- Use canonical company names (e.g. "Apple", not "AAPL" or "Apple Inc.")
-- Return [] if no companies are mentioned
-- Include only publicly traded companies
-- No explanations, no markdown, just the JSON."""
+    sectors = [s for s in result.get("sectors", []) if s in SECTORS]
 
-def stage1_ner(client: Groq, text: str) -> list[str]:
-    """
-    Stage 1: Extract company entity mentions from text.
+    raw_scores = result.get("scores", {})
+    scores = {}
+    for company, data in raw_scores.items():
+        if isinstance(data, dict):
+            scores[company] = {
+                "score":      max(-1.0, min(1.0, float(data.get("score", 0.0)))),
+                "label":      data.get("label", "neutral"),
+                "signal":     data.get("signal", ""),
+                "confidence": max(0.0, min(1.0, float(data.get("confidence", 0.5)))),
+            }
 
-    Returns:
-        List of canonical company names found in the text.
-    """
-    prompt = f"Text: {text[:600]}"
-    raw = _call_groq(client, prompt, NER_SYSTEM)
-    try:
-        result = _parse_json_response(raw)
-        entities = result.get("entities", [])
-        return [str(e).strip() for e in entities if e]
-    except Exception:
-        logger.debug("NER parse failed for text: %s...", text[:80])
-        return []
+    return entities, sectors, scores
 
 
 # ──────────────────────────────────────────────
-# Stage 2: Sector Classification
-# ──────────────────────────────────────────────
-
-SECTORS = ["Technology", "Finance", "Healthcare", "Energy", "Consumer", "Industrials", "Telecom", "Materials"]
-
-SECTOR_SYSTEM = f"""You are a financial sector classifier. Given a text, identify which sectors it primarily discusses.
-Valid sectors: {', '.join(SECTORS)}
-Return ONLY a JSON object: {{"sectors": ["Sector1", "Sector2"]}}
-Rules:
-- Return only sectors from the valid list
-- Return [] if no sector is clearly relevant
-- Order by relevance (most relevant first)
-- No explanations, no markdown, just JSON."""
-
-def stage2_sector(client: Groq, text: str, entities: list[str]) -> list[str]:
-    """
-    Stage 2: Classify the text into relevant sectors.
-
-    Returns:
-        List of sector names, ordered by relevance.
-    """
-    entities_str = ", ".join(entities) if entities else "unknown"
-    prompt = f"Entities mentioned: {entities_str}\nText: {text[:600]}"
-    raw = _call_groq(client, prompt, SECTOR_SYSTEM)
-    try:
-        result = _parse_json_response(raw)
-        sectors = result.get("sectors", [])
-        return [s for s in sectors if s in SECTORS]
-    except Exception:
-        logger.debug("Sector parse failed.")
-        return []
-
-
-# ──────────────────────────────────────────────
-# Stage 3: Sentiment Scoring
-# ──────────────────────────────────────────────
-
-SENTIMENT_SYSTEM = """You are a financial sentiment analyst. Score sentiment for each company in context of the text.
-Return ONLY a JSON object:
-{
-  "scores": {
-    "CompanyName": {
-      "score": 0.75,
-      "label": "positive",
-      "signal": "earnings beat",
-      "confidence": 0.9
-    }
-  }
-}
-Rules:
-- score: float from -1.0 (very negative) to 1.0 (very positive)
-- label: "positive", "negative", or "neutral"
-- signal: 2-4 word reason (e.g. "earnings beat", "regulatory risk", "product launch")
-- confidence: 0.0 to 1.0 based on clarity of sentiment in text
-- No explanations, no markdown, just JSON."""
-
-def stage3_sentiment(client: Groq, text: str, entities: list[str]) -> dict[str, dict]:
-    """
-    Stage 3: Score sentiment for each entity extracted in Stage 1.
-
-    Returns:
-        Dict mapping company name → sentiment dict with score, label, signal, confidence.
-    """
-    if not entities:
-        return {}
-
-    entities_str = ", ".join(entities)
-    prompt = f"Companies to score: {entities_str}\nText: {text[:600]}"
-    raw = _call_groq(client, prompt, SENTIMENT_SYSTEM)
-    try:
-        result = _parse_json_response(raw)
-        scores = result.get("scores", {})
-        # Validate and clamp scores
-        validated = {}
-        for company, data in scores.items():
-            if isinstance(data, dict):
-                data["score"] = max(-1.0, min(1.0, float(data.get("score", 0.0))))
-                data["confidence"] = max(0.0, min(1.0, float(data.get("confidence", 0.5))))
-                validated[company] = data
-        return validated
-    except Exception:
-        logger.debug("Sentiment parse failed.")
-        return {}
-
-
-# ──────────────────────────────────────────────
-# Full Pipeline
+# Full Pipeline (single call)
 # ──────────────────────────────────────────────
 
 def run_pipeline(item: dict[str, Any]) -> dict[str, Any]:
     """
-    Run the full 3-stage pipeline on a single article or post.
-
-    Args:
-        item: dict with at least {"id", "text", "source", "published_at"}
-
-    Returns:
-        Enriched dict with pipeline results added.
+    Run the combined single-call pipeline on one article or post.
+    One Groq call returns entities + sectors + sentiment together.
     """
     client = _groq_client()
     text = item.get("text", "")
@@ -201,17 +125,12 @@ def run_pipeline(item: dict[str, Any]) -> dict[str, Any]:
         return {**item, "entities": [], "sectors": [], "sentiment_scores": {}, "pipeline_ran": False}
 
     try:
-        # Stage 1: Entity Extraction
-        entities = stage1_ner(client, text)
-        logger.debug("[%s] Stage 1 → entities: %s", item.get("id", "?")[:8], entities)
+        raw = _call_groq(client, text)
+        result = _parse_json_response(raw)
+        entities, sectors, sentiment_scores = _validate_result(result)
 
-        # Stage 2: Sector Classification
-        sectors = stage2_sector(client, text, entities)
-        logger.debug("[%s] Stage 2 → sectors: %s", item.get("id", "?")[:8], sectors)
-
-        # Stage 3: Sentiment Scoring
-        sentiment_scores = stage3_sentiment(client, text, entities) if entities else {}
-        logger.debug("[%s] Stage 3 → scores: %s", item.get("id", "?")[:8], list(sentiment_scores.keys()))
+        logger.debug("[%s] entities=%s sectors=%s scores=%s",
+                     item.get("id", "?")[:8], entities, sectors, list(sentiment_scores.keys()))
 
         return {
             **item,
@@ -226,7 +145,7 @@ def run_pipeline(item: dict[str, Any]) -> dict[str, Any]:
         return {**item, "entities": [], "sectors": [], "sentiment_scores": {}, "pipeline_ran": False, "error": str(e)}
 
 
-def run_pipeline_batch(items: list[dict], batch_size: int = 5, delay: float = 0.3) -> list[dict]:
+def run_pipeline_batch(items: list[dict], batch_size: int = 10, delay: float = 1.0) -> list[dict]:
     """
     Run the pipeline on a batch of items with rate-limit-safe pacing.
 
