@@ -33,6 +33,7 @@ def init_db() -> None:
                 title       TEXT,
                 url         TEXT,
                 text        TEXT,
+                summary     TEXT,
                 published_at TEXT,
                 fetched_at  TEXT,
                 pipeline_ran INTEGER DEFAULT 0,
@@ -61,6 +62,12 @@ def init_db() -> None:
             CREATE INDEX IF NOT EXISTS idx_signals_detected ON signals(detected_at);
             CREATE INDEX IF NOT EXISTS idx_signals_name     ON signals(name);
         """)
+    # Migration: add summary column if missing (safe to run on existing DBs)
+    with _get_conn() as conn:
+        cols = [r[1] for r in conn.execute("PRAGMA table_info(articles)").fetchall()]
+        if "summary" not in cols:
+            conn.execute("ALTER TABLE articles ADD COLUMN summary TEXT")
+            logger.info("Migration: added summary column to articles table.")
     logger.info("Database initialized at %s", DB_PATH)
 
 
@@ -78,6 +85,7 @@ def upsert_articles(items: list[dict[str, Any]]) -> int:
             item.get("title", ""),
             item.get("url", ""),
             item.get("text", ""),
+            item.get("summary", ""),
             item.get("published_at", ""),
             item.get("fetched_at", ""),
             int(item.get("pipeline_ran", False)),
@@ -89,9 +97,9 @@ def upsert_articles(items: list[dict[str, Any]]) -> int:
     with _get_conn() as conn:
         conn.executemany("""
             INSERT OR REPLACE INTO articles
-            (id, source, category, title, url, text, published_at, fetched_at,
+            (id, source, category, title, url, text, summary, published_at, fetched_at,
              pipeline_ran, entities, sectors, sentiment_scores)
-            VALUES (?,?,?,?,?,?,?,?,?,?,?,?)
+            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)
         """, rows)
 
     logger.info("Upserted %d articles.", len(rows))

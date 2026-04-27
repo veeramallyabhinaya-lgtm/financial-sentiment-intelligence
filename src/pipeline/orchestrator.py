@@ -25,10 +25,11 @@ RETRY_DELAY = 2.0
 SECTORS = ["Technology", "Finance", "Healthcare", "Energy", "Consumer", "Industrials", "Telecom", "Materials"]
 
 # Single combined prompt — 1 API call per article instead of 3
-COMBINED_SYSTEM = f"""You are a financial NLP analyst. Given a news article or post, perform three tasks in one response.
+COMBINED_SYSTEM = f"""You are a financial NLP analyst. Given a news article or post, perform four tasks in one response.
 
 Return ONLY a valid JSON object in exactly this format:
 {{
+  "summary": "One to two sentence plain-English summary of what this article is actually about.",
   "entities": ["Company A", "Company B"],
   "sectors": ["Technology", "Finance"],
   "scores": {{
@@ -38,6 +39,7 @@ Return ONLY a valid JSON object in exactly this format:
 }}
 
 Rules:
+- summary: 1-2 plain English sentences. What happened and why it matters. No jargon. Max 200 chars.
 - entities: canonical names of publicly traded companies mentioned (e.g. "Apple" not "AAPL"). Empty list if none.
 - sectors: from this list only — {', '.join(SECTORS)}. Most relevant first. Empty list if none apply.
 - scores: sentiment per entity. score is -1.0 (very bearish) to 1.0 (very bullish). label is positive/negative/neutral. signal is 2-4 words. confidence is 0.0-1.0.
@@ -64,7 +66,7 @@ def _call_groq(client: Groq, text: str) -> str:
                     {"role": "user", "content": prompt},
                 ],
                 temperature=0.1,
-                max_tokens=400,
+                max_tokens=500,
             )
             return response.choices[0].message.content.strip()
         except Exception as e:
@@ -89,8 +91,10 @@ def _parse_json_response(raw: str) -> Any:
     return json.loads(clean)
 
 
-def _validate_result(result: dict) -> tuple[list, list, dict]:
+def _validate_result(result: dict) -> tuple[str, list, list, dict]:
     """Validate and sanitize pipeline output."""
+    summary = str(result.get("summary", "")).strip()[:300]
+
     entities = [str(e).strip() for e in result.get("entities", []) if e]
 
     sectors = [s for s in result.get("sectors", []) if s in SECTORS]
@@ -106,7 +110,7 @@ def _validate_result(result: dict) -> tuple[list, list, dict]:
                 "confidence": max(0.0, min(1.0, float(data.get("confidence", 0.5)))),
             }
 
-    return entities, sectors, scores
+    return summary, entities, sectors, scores
 
 
 # ──────────────────────────────────────────────
@@ -127,13 +131,14 @@ def run_pipeline(item: dict[str, Any]) -> dict[str, Any]:
     try:
         raw = _call_groq(client, text)
         result = _parse_json_response(raw)
-        entities, sectors, sentiment_scores = _validate_result(result)
+        summary, entities, sectors, sentiment_scores = _validate_result(result)
 
         logger.debug("[%s] entities=%s sectors=%s scores=%s",
                      item.get("id", "?")[:8], entities, sectors, list(sentiment_scores.keys()))
 
         return {
             **item,
+            "summary": summary,
             "entities": entities,
             "sectors": sectors,
             "sentiment_scores": sentiment_scores,
@@ -142,7 +147,7 @@ def run_pipeline(item: dict[str, Any]) -> dict[str, Any]:
 
     except Exception as e:
         logger.error("Pipeline failed for item %s: %s", item.get("id", "?"), e)
-        return {**item, "entities": [], "sectors": [], "sentiment_scores": {}, "pipeline_ran": False, "error": str(e)}
+        return {**item, "summary": "", "entities": [], "sectors": [], "sentiment_scores": {}, "pipeline_ran": False, "error": str(e)}
 
 
 def run_pipeline_batch(items: list[dict], batch_size: int = 10, delay: float = 1.0) -> list[dict]:
