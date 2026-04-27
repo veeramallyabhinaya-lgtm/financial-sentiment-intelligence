@@ -33,7 +33,9 @@ def init_db() -> None:
                 title       TEXT,
                 url         TEXT,
                 text        TEXT,
-                summary     TEXT,
+                summary          TEXT,
+                news_type        TEXT DEFAULT 'company_specific',
+                news_importance  REAL DEFAULT 0.5,
                 published_at TEXT,
                 fetched_at  TEXT,
                 pipeline_ran INTEGER DEFAULT 0,
@@ -46,6 +48,13 @@ def init_db() -> None:
             CREATE INDEX IF NOT EXISTS idx_articles_published ON articles(published_at);
             CREATE INDEX IF NOT EXISTS idx_articles_source    ON articles(source);
             CREATE INDEX IF NOT EXISTS idx_articles_pipeline  ON articles(pipeline_ran);
+
+            CREATE TABLE IF NOT EXISTS scored_pairs (
+                pair_key    TEXT PRIMARY KEY,  -- "{article_id}::{company}"
+                scored_at   TEXT DEFAULT (datetime('now'))
+            );
+
+            CREATE INDEX IF NOT EXISTS idx_scored_pairs ON scored_pairs(pair_key);
 
             CREATE TABLE IF NOT EXISTS signals (
                 id          TEXT PRIMARY KEY,
@@ -62,12 +71,17 @@ def init_db() -> None:
             CREATE INDEX IF NOT EXISTS idx_signals_detected ON signals(detected_at);
             CREATE INDEX IF NOT EXISTS idx_signals_name     ON signals(name);
         """)
-    # Migration: add summary column if missing (safe to run on existing DBs)
+    # Migrations: add new columns if missing (safe on existing DBs)
     with _get_conn() as conn:
         cols = [r[1] for r in conn.execute("PRAGMA table_info(articles)").fetchall()]
-        if "summary" not in cols:
-            conn.execute("ALTER TABLE articles ADD COLUMN summary TEXT")
-            logger.info("Migration: added summary column to articles table.")
+        for col, defn in [
+            ("summary",         "TEXT"),
+            ("news_type",       "TEXT DEFAULT 'company_specific'"),
+            ("news_importance", "REAL DEFAULT 0.5"),
+        ]:
+            if col not in cols:
+                conn.execute(f"ALTER TABLE articles ADD COLUMN {col} {defn}")
+                logger.info("Migration: added %s column to articles.", col)
     logger.info("Database initialized at %s", DB_PATH)
 
 
@@ -86,6 +100,8 @@ def upsert_articles(items: list[dict[str, Any]]) -> int:
             item.get("url", ""),
             item.get("text", ""),
             item.get("summary", ""),
+            item.get("news_type", "company_specific"),
+            float(item.get("news_importance", 0.5)),
             item.get("published_at", ""),
             item.get("fetched_at", ""),
             int(item.get("pipeline_ran", False)),
@@ -97,9 +113,10 @@ def upsert_articles(items: list[dict[str, Any]]) -> int:
     with _get_conn() as conn:
         conn.executemany("""
             INSERT OR REPLACE INTO articles
-            (id, source, category, title, url, text, summary, published_at, fetched_at,
+            (id, source, category, title, url, text, summary,
+             news_type, news_importance, published_at, fetched_at,
              pipeline_ran, entities, sectors, sentiment_scores)
-            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)
+            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
         """, rows)
 
     logger.info("Upserted %d articles.", len(rows))
@@ -205,3 +222,21 @@ def get_recent_signals(hours: int = 72) -> list[dict]:
         d["article_ids"] = json.loads(d.get("article_ids") or "[]")
         result.append(d)
     return result
+
+def get_scored_pairs() -> set[str]:
+    """Return all tracked (article_id::company) pairs from previous runs."""
+    with _get_conn() as conn:
+        rows = conn.execute("SELECT pair_key FROM scored_pairs").fetchall()
+    return {r["pair_key"] for r in rows}
+
+
+def save_scored_pairs(pairs: set[str]) -> None:
+    """Persist new scored pairs to prevent cross-run double-scoring."""
+    if not pairs:
+        return
+    now = datetime.now(timezone.utc).isoformat()
+    with _get_conn() as conn:
+        conn.executemany(
+            "INSERT OR IGNORE INTO scored_pairs (pair_key, scored_at) VALUES (?,?)",
+            [(p, now) for p in pairs],
+        )

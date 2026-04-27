@@ -1,0 +1,256 @@
+{
+  "_comment": "Anchor articles that define the scoring scale. Add/edit freely. The model scores all new articles relative to these. Promote high-confidence DB articles here to improve calibration over time.",
+  "version": 1,
+  "anchors": [
+    {
+      "id": "anchor_001",
+      "text": "RBI Monetary Policy Committee cuts repo rate by 25 basis points to 6.00%, citing easing headline inflation at 4.2% and need to support GDP growth. Decision was unanimous. Governor signals accommodative stance could continue if inflation stays in band.",
+      "news_type": "sector_wide",
+      "news_importance": 0.95,
+      "sectors": [
+        "Finance"
+      ],
+      "scores": {
+        "HDFC Bank": {
+          "score": 0.72,
+          "signal": "NIMs expand on rate cut",
+          "confidence": 0.92
+        },
+        "ICICI Bank": {
+          "score": 0.7,
+          "signal": "NIMs expand on rate cut",
+          "confidence": 0.9
+        },
+        "Kotak Mahindra Bank": {
+          "score": 0.65,
+          "signal": "lending book boost",
+          "confidence": 0.88
+        },
+        "State Bank of India": {
+          "score": 0.62,
+          "signal": "PSU bank rate tailwind",
+          "confidence": 0.85
+        },
+        "AU Small Finance Bank": {
+          "score": 0.38,
+          "signal": "modest NIM benefit",
+          "confidence": 0.75
+        }
+      }
+    },
+    {
+      "id": "anchor_002",
+      "text": "SEBI introduces stricter disclosure norms for related-party transactions above Rs 1,000 crore, effective Q3. Listed companies must seek shareholder approval for deals with promoter entities. Analysts flag Adani Group entities and Reliance as most impacted.",
+      "news_type": "sector_wide",
+      "news_importance": 0.88,
+      "sectors": [
+        "Finance",
+        "Energy",
+        "Materials"
+      ],
+      "scores": {
+        "Reliance Industries": {
+          "score": -0.45,
+          "signal": "compliance cost risk",
+          "confidence": 0.82
+        },
+        "Bajaj Finance": {
+          "score": -0.2,
+          "signal": "disclosure headwind",
+          "confidence": 0.7
+        }
+      }
+    },
+    {
+      "id": "anchor_003",
+      "text": "TCS Q2 FY25 results: Revenue Rs 61,467 crore, up 8.9% YoY, beating analyst estimate of Rs 60,200 crore. Net profit Rs 11,909 crore, up 5% YoY. EBIT margin 24.1%, in line. Deal wins TCV .6B, highest in six quarters. Management raises FY25 guidance.",
+      "news_type": "company_specific",
+      "news_importance": 0.82,
+      "sectors": [
+        "Technology"
+      ],
+      "scores": {
+        "TCS": {
+          "score": 0.68,
+          "signal": "strong deal wins beat",
+          "confidence": 0.93
+        }
+      }
+    },
+    {
+      "id": "anchor_004",
+      "text": "Infosys Q2 FY25: Revenue .71B, up 3.1% YoY in USD terms, in line with estimates. Net profit Rs 6,506 crore. Revised FY25 revenue guidance to 3.75-4.5% from 3-4%. Headcount flat. Management cautious on discretionary spend recovery.",
+      "news_type": "company_specific",
+      "news_importance": 0.6,
+      "sectors": [
+        "Technology"
+      ],
+      "scores": {
+        "Infosys": {
+          "score": 0.18,
+          "signal": "guidance raise, soft volume",
+          "confidence": 0.85
+        }
+      }
+    },
+    {
+      "id": "anchor_005",
+      "text": "India CPI inflation for September came in at 5.49%, above the RBI upper tolerance band of 6% for the second consecutive month. Food inflation at 9.2% driven by vegetable prices. Economists now push back rate cut expectations to Q2 FY26.",
+      "news_type": "macro",
+      "news_importance": 0.78,
+      "sectors": [
+        "Finance",
+        "Consumer"
+      ],
+      "scores": {
+        "HDFC Bank": {
+          "score": -0.35,
+          "signal": "rate cut delay hurts",
+          "confidence": 0.8
+        },
+        "Hindustan Unilever": {
+          "score": -0.28,
+          "signal": "input cost pressure",
+          "confidence": 0.75
+        },
+        "ITC": {
+          "score": -0.2,
+          "signal": "volume growth headwind",
+          "confidence": 0.7
+        }
+      }
+    },
+    {
+      "id": "anchor_006",
+      "text": "Sun Pharmaceutical acquires US-based specialty pharma firm Checkpoint Therapeutics for 55 million in an all-cash deal. The acquisition adds two FDA-approved oncology assets and a pipeline of 6 candidates. Street estimates accretion from FY27.",
+      "news_type": "company_specific",
+      "news_importance": 0.8,
+      "sectors": [
+        "Healthcare"
+      ],
+      "scores": {
+        "Sun Pharmaceutical": {
+          "score": 0.55,
+          "signal": "oncology pipeline boost",
+          "confidence": 0.88
+        }
+      }
+    },
+    {
+      "id": "anchor_007",
+      "text": "Reliance Jio launches JioAirFiber in 100 new cities, pricing plans starting Rs 599/month for 30 Mbps. Company targets 20 million FTTH subscribers by FY26. Analysts flag threat to Airtel broadband market share in Tier 2 cities.",
+      "news_type": "company_specific",
+      "news_importance": 0.62,
+      "sectors": [
+        "Telecom"
+      ],
+      "scores": {
+        "Reliance Industries": {
+          "score": 0.38,
+          "signal": "FTTH expansion positive",
+          "confidence": 0.8
+        },
+        "Bharti Airtel": {
+          "score": -0.3,
+          "signal": "competitive pressure Tier 2",
+          "confidence": 0.78
+        }
+      }
+    },
+    {
+      "id": "anchor_008",
+      "text": "HDFC Bank MD and CEO Sashidhar Jagdishan to retire in October 2026. Board has initiated succession planning; no internal candidate named yet. Analysts flag transition risk given the bank is mid-way through its merger integration with HDFC Ltd.",
+      "news_type": "company_specific",
+      "news_importance": 0.74,
+      "sectors": [
+        "Finance"
+      ],
+      "scores": {
+        "HDFC Bank": {
+          "score": -0.42,
+          "signal": "CEO succession uncertainty",
+          "confidence": 0.88
+        }
+      }
+    },
+    {
+      "id": "anchor_009",
+      "text": "Motilal Oswal initiates coverage on Larsen & Toubro with Buy rating and target price Rs 4,200, implying 18% upside. Analyst cites Rs 10 lakh crore order book, strong defence pipeline, and data centre opportunity as key catalysts.",
+      "news_type": "company_specific",
+      "news_importance": 0.48,
+      "sectors": [
+        "Industrials"
+      ],
+      "scores": {
+        "Larsen & Toubro": {
+          "score": 0.28,
+          "signal": "analyst initiation bullish",
+          "confidence": 0.72
+        }
+      }
+    },
+    {
+      "id": "anchor_010",
+      "text": "Global crude oil prices fell 3.8% to 1 per barrel after OPEC+ decided to proceed with planned production increase of 180,000 bpd from December. IEA cuts 2025 demand growth forecast citing China slowdown. Brent crude at 14-month low.",
+      "news_type": "macro",
+      "news_importance": 0.72,
+      "sectors": [
+        "Energy"
+      ],
+      "scores": {
+        "ONGC": {
+          "score": -0.5,
+          "signal": "crude price decline direct",
+          "confidence": 0.88
+        },
+        "Reliance Industries": {
+          "score": -0.22,
+          "signal": "downstream margin pressure",
+          "confidence": 0.72
+        },
+        "Coal India": {
+          "score": -0.08,
+          "signal": "minor energy sector drag",
+          "confidence": 0.55
+        }
+      }
+    },
+    {
+      "id": "anchor_011",
+      "text": "JSW Steel reports Q2 FY25 EBITDA of Rs 4,200 crore, down 22% YoY and 8% below consensus. Steel realisations fell Rs 2,800/tonne on Chinese dumping pressure. Management cuts volume guidance for FY25 by 5%. Stock falls 6% intraday.",
+      "news_type": "company_specific",
+      "news_importance": 0.76,
+      "sectors": [
+        "Materials"
+      ],
+      "scores": {
+        "JSW Steel": {
+          "score": -0.65,
+          "signal": "EBITDA miss, volume cut",
+          "confidence": 0.92
+        },
+        "Tata Steel": {
+          "score": -0.3,
+          "signal": "sector read-through negative",
+          "confidence": 0.72
+        }
+      }
+    },
+    {
+      "id": "anchor_012",
+      "text": "Hindustan Unilever launches new premium skincare line under its Lakme brand targeting urban millennials. Company will invest Rs 150 crore in marketing over FY25. Analysts see limited near-term P&L impact; long-term premiumisation play.",
+      "news_type": "company_specific",
+      "news_importance": 0.32,
+      "sectors": [
+        "Consumer"
+      ],
+      "scores": {
+        "Hindustan Unilever": {
+          "score": 0.15,
+          "signal": "premiumisation initiative",
+          "confidence": 0.68
+        }
+      }
+    }
+  ]
+}

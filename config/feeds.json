@@ -1,48 +1,153 @@
 [
   {
-    "url": "https://finance.yahoo.com/news/rssindex",
-    "source": "Yahoo Finance",
+    "url": "https://economictimes.indiatimes.com/markets/rssfeeds/1977021501.cms",
+    "source": "ET Markets",
     "category": "general"
   },
   {
-    "url": "https://finance.yahoo.com/rss/topfinstories",
-    "source": "Yahoo Finance Top",
+    "url": "https://economictimes.indiatimes.com/markets/stocks/rssfeeds/2146842.cms",
+    "source": "ET Stocks",
     "category": "general"
   },
   {
-    "url": "https://seekingalpha.com/feed.xml",
-    "source": "Seeking Alpha",
-    "category": "investing"
-  },
-  {
-    "url": "https://www.cnbc.com/id/100003114/device/rss/rss.html",
-    "source": "CNBC Business",
-    "category": "general"
-  },
-  {
-    "url": "https://www.cnbc.com/id/10000664/device/rss/rss.html",
-    "source": "CNBC Tech",
-    "category": "tech"
-  },
-  {
-    "url": "https://www.cnbc.com/id/10001147/device/rss/rss.html",
-    "source": "CNBC Finance",
+    "url": "https://economictimes.indiatimes.com/industry/banking/finance/rssfeeds/13358259.cms",
+    "source": "ET Banking",
     "category": "finance"
   },
   {
-    "url": "https://www.cnbc.com/id/15839069/device/rss/rss.html",
-    "source": "CNBC US News",
+    "url": "https://economictimes.indiatimes.com/tech/technology/rssfeeds/13357270.cms",
+    "source": "ET Technology",
+    "category": "tech"
+  },
+  {
+    "url": "https://economictimes.indiatimes.com/industry/energy/rssfeeds/13358250.cms",
+    "source": "ET Energy",
+    "category": "energy"
+  },
+  {
+    "url": "https://economictimes.indiatimes.com/industry/healthcare/biotech/pharmaceuticals/rssfeeds/13358326.cms",
+    "source": "ET Pharma",
+    "category": "healthcare"
+  },
+  {
+    "url": "https://economictimes.indiatimes.com/news/economy/rssfeeds/20396201.cms",
+    "source": "ET Economy",
+    "category": "macro"
+  },
+  {
+    "url": "https://www.moneycontrol.com/rss/MCtopnews.xml",
+    "source": "Moneycontrol Top News",
     "category": "general"
   },
   {
-    "url": "https://feeds.marketwatch.com/marketwatch/topstories/",
-    "source": "MarketWatch Top",
+    "url": "https://www.moneycontrol.com/rss/marketreports.xml",
+    "source": "Moneycontrol Markets",
     "category": "general"
   },
   {
-    "url": "https://feeds.marketwatch.com/marketwatch/marketpulse/",
-    "source": "MarketWatch Pulse",
+    "url": "https://www.moneycontrol.com/rss/business.xml",
+    "source": "Moneycontrol Business",
     "category": "general"
+  },
+  {
+    "url": "https://www.livemint.com/rss/markets",
+    "source": "Mint Markets",
+    "category": "general"
+  },
+  {
+    "url": "https://www.livemint.com/rss/companies",
+    "source": "Mint Companies",
+    "category": "general"
+  },
+  {
+    "url": "https://www.livemint.com/rss/economy",
+    "source": "Mint Economy",
+    "category": "macro"
+  },
+  {
+    "url": "https://www.livemint.com/rss/technology",
+    "source": "Mint Technology",
+    "category": "tech"
+  },
+  {
+    "url": "https://www.business-standard.com/rss/markets-106.rss",
+    "source": "Business Standard Markets",
+    "category": "general"
+  },
+  {
+    "url": "https://www.business-standard.com/rss/finance-103.rss",
+    "source": "Business Standard Finance",
+    "category": "finance"
+  },
+  {
+    "url": "https://www.business-standard.com/rss/economy-policy-102.rss",
+    "source": "Business Standard Economy",
+    "category": "macro"
+  },
+  {
+    "url": "https://www.business-standard.com/rss/companies-101.rss",
+    "source": "Business Standard Companies",
+    "category": "general"
+  },
+  {
+    "url": "https://www.financialexpress.com/market/feed/",
+    "source": "Financial Express Markets",
+    "category": "general"
+  },
+  {
+    "url": "https://www.financialexpress.com/economy/feed/",
+    "source": "Financial Express Economy",
+    "category": "macro"
+  },
+  {
+    "url": "https://www.thehindubusinessline.com/markets/?service=rss",
+    "source": "Hindu BusinessLine Markets",
+    "category": "general"
+  },
+  {
+    "url": "https://www.thehindubusinessline.com/economy/?service=rss",
+    "source": "Hindu BusinessLine Economy",
+    "category": "macro"
+  },
+  {
+    "url": "https://www.thehindubusinessline.com/companies/?service=rss",
+    "source": "Hindu BusinessLine Companies",
+    "category": "general"
+  },
+  {
+    "url": "https://zeebiz.com/markets/rss",
+    "source": "Zee Business Markets",
+    "category": "general"
+  },
+  {
+    "url": "https://zeebiz.com/economy-infra/rss",
+    "source": "Zee Business Economy",
+    "category": "macro"
+  },
+  {
+    "url": "https://www.ndtvprofit.com/feeds/latest",
+    "source": "NDTV Profit",
+    "category": "general"
+  },
+  {
+    "url": "https://www.ndtvprofit.com/feeds/markets",
+    "source": "NDTV Profit Markets",
+    "category": "general"
+  },
+  {
+    "url": "https://stockanalysis.com/feed/",
+    "source": "Stock Analysis India",
+    "category": "investing"
+  },
+  {
+    "url": "https://www.sebi.gov.in/sebi_data/rss/sebi_press.xml",
+    "source": "SEBI Press Releases",
+    "category": "regulatory"
+  },
+  {
+    "url": "https://www.rbi.org.in/rss/pressreleases.xml",
+    "source": "RBI Press Releases",
+    "category": "regulatory"
   },
   {
     "url": "https://feeds.bloomberg.com/markets/news.rss",
@@ -55,33 +160,18 @@
     "category": "tech"
   },
   {
-    "url": "https://feeds.bloomberg.com/politics/news.rss",
-    "source": "Bloomberg Politics",
-    "category": "macro"
-  },
-  {
     "url": "https://www.ft.com/rss/home",
     "source": "Financial Times",
     "category": "general"
   },
   {
-    "url": "https://www.businessinsider.com/rss",
-    "source": "Business Insider",
+    "url": "https://feeds.reuters.com/reuters/businessNews.rss",
+    "source": "Reuters Business",
     "category": "general"
   },
   {
-    "url": "https://techcrunch.com/feed/",
-    "source": "TechCrunch",
-    "category": "tech"
-  },
-  {
-    "url": "https://www.theverge.com/rss/index.xml",
-    "source": "The Verge",
-    "category": "tech"
-  },
-  {
-    "url": "https://feeds.arstechnica.com/arstechnica/index/",
-    "source": "Ars Technica",
+    "url": "https://feeds.reuters.com/reuters/technologyNews.rss",
+    "source": "Reuters Tech",
     "category": "tech"
   },
   {
@@ -95,19 +185,29 @@
     "category": "general"
   },
   {
+    "url": "https://finance.yahoo.com/news/rssindex",
+    "source": "Yahoo Finance",
+    "category": "general"
+  },
+  {
+    "url": "https://seekingalpha.com/feed.xml",
+    "source": "Seeking Alpha",
+    "category": "investing"
+  },
+  {
     "url": "https://www.morningstar.com/rss/articles.xml",
     "source": "Morningstar",
+    "category": "investing"
+  },
+  {
+    "url": "https://www.valuewalk.com/feed/",
+    "source": "ValueWalk",
     "category": "investing"
   },
   {
     "url": "https://feeds.feedburner.com/zerohedge/feed",
     "source": "Zero Hedge",
     "category": "macro"
-  },
-  {
-    "url": "https://www.valuewalk.com/feed/",
-    "source": "ValueWalk",
-    "category": "investing"
   },
   {
     "url": "https://www.prnewswire.com/rss/news-releases-list.rss",
@@ -133,110 +233,5 @@
     "url": "https://globenewswire.com/RssFeed/industry/2200",
     "source": "Globe Newswire Energy",
     "category": "energy"
-  },
-  {
-    "url": "https://globenewswire.com/RssFeed/industry/8600",
-    "source": "Globe Newswire Industrials",
-    "category": "industrials"
-  },
-  {
-    "url": "https://feeds.a.dj.com/rss/RSSWSJD.xml",
-    "source": "Dow Jones",
-    "category": "general"
-  },
-  {
-    "url": "https://feeds.content.dowjones.io/public/rss/mw_topstories",
-    "source": "Dow Jones Top Stories",
-    "category": "general"
-  },
-  {
-    "url": "https://www.ibtimes.com/rss",
-    "source": "International Business Times",
-    "category": "general"
-  },
-  {
-    "url": "https://feeds.reuters.com/reuters/businessNews.rss",
-    "source": "Reuters Business",
-    "category": "general"
-  },
-  {
-    "url": "https://feeds.reuters.com/reuters/technologyNews.rss",
-    "source": "Reuters Tech",
-    "category": "tech"
-  },
-  {
-    "url": "https://feeds.reuters.com/reuters/health.rss",
-    "source": "Reuters Health",
-    "category": "healthcare"
-  },
-  {
-    "url": "https://feeds.apnews.com/rss/apf-business",
-    "source": "AP Business",
-    "category": "general"
-  },
-  {
-    "url": "https://feeds.apnews.com/rss/apf-technology",
-    "source": "AP Technology",
-    "category": "tech"
-  },
-  {
-    "url": "https://feeds.apnews.com/rss/apf-finance",
-    "source": "AP Finance",
-    "category": "finance"
-  },
-  {
-    "url": "https://feeds.apnews.com/rss/apf-health",
-    "source": "AP Health",
-    "category": "healthcare"
-  },
-  {
-    "url": "https://feeds.npr.org/1017/rss.xml",
-    "source": "NPR Economy",
-    "category": "macro"
-  },
-  {
-    "url": "https://feeds.npr.org/1006/rss.xml",
-    "source": "NPR Business",
-    "category": "general"
-  },
-  {
-    "url": "https://www.theguardian.com/business/rss",
-    "source": "Guardian Business",
-    "category": "general"
-  },
-  {
-    "url": "https://www.theguardian.com/technology/rss",
-    "source": "Guardian Tech",
-    "category": "tech"
-  },
-  {
-    "url": "https://www.theguardian.com/environment/energy/rss",
-    "source": "Guardian Energy",
-    "category": "energy"
-  },
-  {
-    "url": "https://fortune.com/feed/",
-    "source": "Fortune",
-    "category": "general"
-  },
-  {
-    "url": "https://www.fastcompany.com/technology/rss",
-    "source": "Fast Company Tech",
-    "category": "tech"
-  },
-  {
-    "url": "https://www.wired.com/feed/category/business/latest/rss",
-    "source": "Wired Business",
-    "category": "tech"
-  },
-  {
-    "url": "https://www.technologyreview.com/feed/",
-    "source": "MIT Tech Review",
-    "category": "tech"
-  },
-  {
-    "url": "https://www.coindesk.com/arc/outboundfeeds/rss/",
-    "source": "CoinDesk",
-    "category": "finance"
   }
 ]

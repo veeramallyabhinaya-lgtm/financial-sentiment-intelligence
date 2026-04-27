@@ -84,10 +84,16 @@ h1,h2,h3,h4 { font-family: 'Syne', sans-serif !important; color: #0f2d5e !import
 
 .filter-bar {
     background: rgba(219,234,254,0.55); backdrop-filter:blur(8px);
-    border:1px solid rgba(147,197,253,0.4); border-radius:14px;
-    padding:0.9rem 1.5rem; margin-bottom:1.1rem;
+    border:1px solid rgba(147,197,253,0.4); border-radius:16px;
+    padding:1.1rem 1.75rem 1.2rem; margin-bottom:1.2rem;
 }
-.filter-label { font-family:'Syne',sans-serif; font-size:0.67rem; font-weight:600; text-transform:uppercase; letter-spacing:0.1em; color:#2563eb; margin-bottom:0.3rem; }
+.filter-label {
+    font-family:'Syne',sans-serif; font-size:0.65rem; font-weight:700;
+    text-transform:uppercase; letter-spacing:0.12em; color:#1d4ed8;
+    margin-bottom:0.45rem; display:block;
+}
+/* Force consistent vertical alignment across filter columns */
+[data-testid="column"] > div:first-child { padding-top: 0 !important; }
 
 .card {
     background: rgba(255,255,255,0.72); backdrop-filter:blur(12px);
@@ -150,8 +156,14 @@ def _load(lb, ma):
 # ── Hero ──────────────────────────────────────────────────────────────────────
 st.markdown("""
 <div class="hero">
-  <p class="hero-title">📊 Financial Sentiment Intelligence</p>
-  <p class="hero-sub">Real-time NLP pipeline &nbsp;·&nbsp; Groq LLaMA-3.3 70B &nbsp;·&nbsp; 48 feeds &nbsp;·&nbsp; 10 subreddits &nbsp;·&nbsp; 8 sectors &nbsp;·&nbsp; 25+ companies</p>
+  <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.4rem;">
+    <span style="font-size:1.5rem;">📡</span>
+    <p class="hero-title">India Market Sentiment Intelligence</p>
+  </div>
+  <p class="hero-sub">
+    Groq LLaMA-3.3 70B &nbsp;·&nbsp; 47 feeds incl. ET, Mint, Moneycontrol, Business Standard
+    &nbsp;·&nbsp; Nifty 50 constituents &nbsp;·&nbsp; 8 sectors &nbsp;·&nbsp; RBI &amp; SEBI signals
+  </p>
 </div>
 """, unsafe_allow_html=True)
 
@@ -344,12 +356,19 @@ with t4:
         sr = f'<span class="badge bs">{art.get("source","")}</span>'
         su = f'<div class="article-summary">{summ}</div>' if summ else ""
 
+        nt = art.get("news_type", "")
+        nt_map = {"sector_wide": ("🌐 Sector", "#0369a1","#e0f2fe"), "macro": ("📊 Macro","#7c3aed","#ede9fe"), "company_specific": ("🏢 Company","#065f46","#dcfce7")}
+        nt_label, nt_color, nt_bg = nt_map.get(nt, ("","#6b7280","#f1f5f9"))
+        nt_badge = f'<span style="background:{nt_bg};color:{nt_color};padding:0.13rem 0.45rem;border-radius:5px;font-size:0.62rem;font-weight:600;">{nt_label}</span>' if nt_label else ""
+        imp = art.get("news_importance", None)
+        imp_badge = f'<span style="background:#fef3c7;color:#92400e;padding:0.13rem 0.4rem;border-radius:5px;font-size:0.62rem;font-weight:600;">⚡ {imp:.2f}</span>' if imp else ""
+
         st.markdown(f"""
         <div class="article-card">
           <div class="article-title"><a href="{art.get('url','#')}" target="_blank" style="color:#0f2d5e;text-decoration:none;">{art.get('title','Untitled')}</a></div>
           {su}
           <div style="display:flex;align-items:center;gap:0.4rem;flex-wrap:wrap;font-size:0.65rem;color:#94a3b8;">
-            {sr} {sb} {eb}
+            {sr} {sb} {nt_badge} {imp_badge} {eb}
             <span style="margin-left:auto;">{pub} &nbsp;·&nbsp; {sc}</span>
           </div>
         </div>""", unsafe_allow_html=True)

@@ -3,72 +3,524 @@
     "Technology": {
       "color": "#6366f1",
       "companies": [
-        {"name": "Apple", "ticker": "AAPL", "aliases": ["Apple Inc", "AAPL", "iPhone maker"]},
-        {"name": "Microsoft", "ticker": "MSFT", "aliases": ["Microsoft Corp", "MSFT", "Azure"]},
-        {"name": "NVIDIA", "ticker": "NVDA", "aliases": ["NVIDIA Corp", "NVDA", "Nvidia"]},
-        {"name": "Alphabet", "ticker": "GOOGL", "aliases": ["Google", "Alphabet Inc", "GOOGL", "GOOG"]},
-        {"name": "Meta", "ticker": "META", "aliases": ["Meta Platforms", "Facebook", "META"]},
-        {"name": "Amazon", "ticker": "AMZN", "aliases": ["Amazon.com", "AWS", "AMZN"]}
+        {
+          "name": "TCS",
+          "ticker": "TCS.NS",
+          "aliases": [
+            "Tata Consultancy Services",
+            "TCS",
+            "Tata Consultancy"
+          ],
+          "index_weight": 0.33
+        },
+        {
+          "name": "Infosys",
+          "ticker": "INFY.NS",
+          "aliases": [
+            "Infosys",
+            "Infy",
+            "INFY"
+          ],
+          "index_weight": 0.28
+        },
+        {
+          "name": "HCL Technologies",
+          "ticker": "HCLTECH.NS",
+          "aliases": [
+            "HCL Tech",
+            "HCL Technologies",
+            "HCLTECH"
+          ],
+          "index_weight": 0.14
+        },
+        {
+          "name": "Wipro",
+          "ticker": "WIPRO.NS",
+          "aliases": [
+            "Wipro",
+            "WIPRO"
+          ],
+          "index_weight": 0.11
+        },
+        {
+          "name": "Tech Mahindra",
+          "ticker": "TECHM.NS",
+          "aliases": [
+            "Tech Mahindra",
+            "TechM",
+            "TECHM"
+          ],
+          "index_weight": 0.07
+        },
+        {
+          "name": "LTIMindtree",
+          "ticker": "LTIM.NS",
+          "aliases": [
+            "LTIMindtree",
+            "LTI Mindtree",
+            "LTIM"
+          ],
+          "index_weight": 0.04
+        },
+        {
+          "name": "Persistent Systems",
+          "ticker": "PERSISTENT.NS",
+          "aliases": [
+            "Persistent Systems",
+            "Persistent"
+          ],
+          "index_weight": 0.03
+        }
       ]
     },
     "Finance": {
       "color": "#10b981",
       "companies": [
-        {"name": "JPMorgan Chase", "ticker": "JPM", "aliases": ["JPMorgan", "JP Morgan", "JPM", "Chase"]},
-        {"name": "Goldman Sachs", "ticker": "GS", "aliases": ["Goldman", "Goldman Sachs", "GS"]},
-        {"name": "Bank of America", "ticker": "BAC", "aliases": ["BofA", "Bank of America", "BAC"]},
-        {"name": "Morgan Stanley", "ticker": "MS", "aliases": ["Morgan Stanley", "MS"]},
-        {"name": "Visa", "ticker": "V", "aliases": ["Visa Inc", "VISA"]}
+        {
+          "name": "HDFC Bank",
+          "ticker": "HDFCBANK.NS",
+          "aliases": [
+            "HDFC Bank",
+            "HDFCBANK",
+            "HDFC"
+          ],
+          "index_weight": 0.28
+        },
+        {
+          "name": "ICICI Bank",
+          "ticker": "ICICIBANK.NS",
+          "aliases": [
+            "ICICI Bank",
+            "ICICIBANK",
+            "ICICI"
+          ],
+          "index_weight": 0.24
+        },
+        {
+          "name": "Kotak Mahindra Bank",
+          "ticker": "KOTAKBANK.NS",
+          "aliases": [
+            "Kotak Bank",
+            "Kotak Mahindra",
+            "Kotak",
+            "KOTAKBANK"
+          ],
+          "index_weight": 0.11
+        },
+        {
+          "name": "Axis Bank",
+          "ticker": "AXISBANK.NS",
+          "aliases": [
+            "Axis Bank",
+            "AXISBANK"
+          ],
+          "index_weight": 0.09
+        },
+        {
+          "name": "State Bank of India",
+          "ticker": "SBIN.NS",
+          "aliases": [
+            "SBI",
+            "State Bank of India",
+            "State Bank",
+            "SBIN"
+          ],
+          "index_weight": 0.08
+        },
+        {
+          "name": "IndusInd Bank",
+          "ticker": "INDUSINDBK.NS",
+          "aliases": [
+            "IndusInd Bank",
+            "IndusInd",
+            "INDUSINDBK"
+          ],
+          "index_weight": 0.05
+        },
+        {
+          "name": "Bajaj Finance",
+          "ticker": "BAJFINANCE.NS",
+          "aliases": [
+            "Bajaj Finance",
+            "Bajaj Fin",
+            "BAJFINANCE"
+          ],
+          "index_weight": 0.05
+        },
+        {
+          "name": "AU Small Finance Bank",
+          "ticker": "AUBANK.NS",
+          "aliases": [
+            "AU Small Finance Bank",
+            "AU Small Finance",
+            "AU Bank",
+            "AUBANK"
+          ],
+          "index_weight": 0.02
+        }
       ]
     },
     "Healthcare": {
       "color": "#f59e0b",
       "companies": [
-        {"name": "Johnson & Johnson", "ticker": "JNJ", "aliases": ["J&J", "Johnson and Johnson", "JNJ"]},
-        {"name": "Pfizer", "ticker": "PFE", "aliases": ["Pfizer Inc", "PFE"]},
-        {"name": "UnitedHealth", "ticker": "UNH", "aliases": ["UnitedHealth Group", "UNH", "United Health"]},
-        {"name": "AbbVie", "ticker": "ABBV", "aliases": ["AbbVie Inc", "ABBV"]}
+        {
+          "name": "Sun Pharmaceutical",
+          "ticker": "SUNPHARMA.NS",
+          "aliases": [
+            "Sun Pharma",
+            "Sun Pharmaceutical",
+            "SUNPHARMA"
+          ],
+          "index_weight": 0.28
+        },
+        {
+          "name": "Dr. Reddy's",
+          "ticker": "DRREDDY.NS",
+          "aliases": [
+            "Dr Reddy's",
+            "Dr. Reddys",
+            "DRREDDY"
+          ],
+          "index_weight": 0.16
+        },
+        {
+          "name": "Cipla",
+          "ticker": "CIPLA.NS",
+          "aliases": [
+            "Cipla",
+            "CIPLA"
+          ],
+          "index_weight": 0.12
+        },
+        {
+          "name": "Divi's Laboratories",
+          "ticker": "DIVISLAB.NS",
+          "aliases": [
+            "Divi's",
+            "Divis Labs",
+            "DIVISLAB"
+          ],
+          "index_weight": 0.1
+        },
+        {
+          "name": "Apollo Hospitals",
+          "ticker": "APOLLOHOSP.NS",
+          "aliases": [
+            "Apollo Hospitals",
+            "Apollo",
+            "APOLLOHOSP"
+          ],
+          "index_weight": 0.08
+        },
+        {
+          "name": "Biocon",
+          "ticker": "BIOCON.NS",
+          "aliases": [
+            "Biocon",
+            "BIOCON"
+          ],
+          "index_weight": 0.06
+        }
       ]
     },
     "Energy": {
       "color": "#ef4444",
       "companies": [
-        {"name": "ExxonMobil", "ticker": "XOM", "aliases": ["Exxon", "ExxonMobil Corp", "XOM"]},
-        {"name": "Chevron", "ticker": "CVX", "aliases": ["Chevron Corp", "CVX"]},
-        {"name": "ConocoPhillips", "ticker": "COP", "aliases": ["ConocoPhillips", "Conoco", "COP"]}
+        {
+          "name": "Reliance Industries",
+          "ticker": "RELIANCE.NS",
+          "aliases": [
+            "Reliance",
+            "RIL",
+            "Reliance Industries",
+            "RELIANCE"
+          ],
+          "index_weight": 0.45
+        },
+        {
+          "name": "ONGC",
+          "ticker": "ONGC.NS",
+          "aliases": [
+            "ONGC",
+            "Oil and Natural Gas Corporation",
+            "Oil India"
+          ],
+          "index_weight": 0.18
+        },
+        {
+          "name": "Coal India",
+          "ticker": "COALINDIA.NS",
+          "aliases": [
+            "Coal India",
+            "CIL",
+            "COALINDIA"
+          ],
+          "index_weight": 0.12
+        },
+        {
+          "name": "NTPC",
+          "ticker": "NTPC.NS",
+          "aliases": [
+            "NTPC",
+            "National Thermal Power"
+          ],
+          "index_weight": 0.12
+        },
+        {
+          "name": "Power Grid",
+          "ticker": "POWERGRID.NS",
+          "aliases": [
+            "Power Grid",
+            "POWERGRID",
+            "Power Grid Corporation"
+          ],
+          "index_weight": 0.08
+        },
+        {
+          "name": "Adani Green Energy",
+          "ticker": "ADANIGREEN.NS",
+          "aliases": [
+            "Adani Green",
+            "Adani Green Energy",
+            "ADANIGREEN"
+          ],
+          "index_weight": 0.05
+        }
       ]
     },
     "Consumer": {
       "color": "#8b5cf6",
       "companies": [
-        {"name": "Walmart", "ticker": "WMT", "aliases": ["Walmart Inc", "WMT"]},
-        {"name": "Costco", "ticker": "COST", "aliases": ["Costco Wholesale", "COST"]},
-        {"name": "McDonald's", "ticker": "MCD", "aliases": ["McDonald's Corp", "McDonalds", "MCD"]},
-        {"name": "Tesla", "ticker": "TSLA", "aliases": ["Tesla Inc", "TSLA", "Tesla Motors"]}
+        {
+          "name": "Hindustan Unilever",
+          "ticker": "HINDUNILVR.NS",
+          "aliases": [
+            "HUL",
+            "Hindustan Unilever",
+            "HINDUNILVR"
+          ],
+          "index_weight": 0.28
+        },
+        {
+          "name": "ITC",
+          "ticker": "ITC.NS",
+          "aliases": [
+            "ITC",
+            "ITC Ltd"
+          ],
+          "index_weight": 0.22
+        },
+        {
+          "name": "Nestle India",
+          "ticker": "NESTLEIND.NS",
+          "aliases": [
+            "Nestle India",
+            "Nestle",
+            "NESTLEIND"
+          ],
+          "index_weight": 0.12
+        },
+        {
+          "name": "Titan Company",
+          "ticker": "TITAN.NS",
+          "aliases": [
+            "Titan",
+            "Titan Company",
+            "TITAN"
+          ],
+          "index_weight": 0.12
+        },
+        {
+          "name": "Tata Consumer Products",
+          "ticker": "TATACONSUM.NS",
+          "aliases": [
+            "Tata Consumer",
+            "TATACONSUM",
+            "Tata Tea"
+          ],
+          "index_weight": 0.08
+        },
+        {
+          "name": "Avenue Supermarts",
+          "ticker": "DMART.NS",
+          "aliases": [
+            "DMart",
+            "D-Mart",
+            "Avenue Supermarts",
+            "DMART"
+          ],
+          "index_weight": 0.08
+        }
       ]
     },
     "Industrials": {
       "color": "#06b6d4",
       "companies": [
-        {"name": "Caterpillar", "ticker": "CAT", "aliases": ["Caterpillar Inc", "CAT"]},
-        {"name": "Boeing", "ticker": "BA", "aliases": ["Boeing Co", "BA"]},
-        {"name": "GE Aerospace", "ticker": "GE", "aliases": ["General Electric", "GE Aerospace", "GE"]}
+        {
+          "name": "Larsen & Toubro",
+          "ticker": "LT.NS",
+          "aliases": [
+            "L&T",
+            "Larsen and Toubro",
+            "Larsen & Toubro",
+            "LT"
+          ],
+          "index_weight": 0.35
+        },
+        {
+          "name": "Mahindra & Mahindra",
+          "ticker": "M&M.NS",
+          "aliases": [
+            "M&M",
+            "Mahindra",
+            "Mahindra and Mahindra",
+            "Mahindra & Mahindra"
+          ],
+          "index_weight": 0.18
+        },
+        {
+          "name": "Tata Motors",
+          "ticker": "TATAMOTORS.NS",
+          "aliases": [
+            "Tata Motors",
+            "TATAMOTORS",
+            "JLR"
+          ],
+          "index_weight": 0.15
+        },
+        {
+          "name": "Bajaj Auto",
+          "ticker": "BAJAJ-AUTO.NS",
+          "aliases": [
+            "Bajaj Auto",
+            "BAJAJ-AUTO"
+          ],
+          "index_weight": 0.12
+        },
+        {
+          "name": "Siemens India",
+          "ticker": "SIEMENS.NS",
+          "aliases": [
+            "Siemens India",
+            "Siemens",
+            "SIEMENS"
+          ],
+          "index_weight": 0.08
+        },
+        {
+          "name": "ABB India",
+          "ticker": "ABB.NS",
+          "aliases": [
+            "ABB India",
+            "ABB"
+          ],
+          "index_weight": 0.07
+        }
       ]
     },
     "Telecom": {
       "color": "#84cc16",
       "companies": [
-        {"name": "AT&T", "ticker": "T", "aliases": ["AT&T Inc", "ATT"]},
-        {"name": "Verizon", "ticker": "VZ", "aliases": ["Verizon Communications", "VZ"]},
-        {"name": "Netflix", "ticker": "NFLX", "aliases": ["Netflix Inc", "NFLX"]}
+        {
+          "name": "Bharti Airtel",
+          "ticker": "BHARTIARTL.NS",
+          "aliases": [
+            "Airtel",
+            "Bharti Airtel",
+            "BHARTIARTL"
+          ],
+          "index_weight": 0.65
+        },
+        {
+          "name": "Vodafone Idea",
+          "ticker": "IDEA.NS",
+          "aliases": [
+            "Vi",
+            "Vodafone Idea",
+            "IDEA"
+          ],
+          "index_weight": 0.08
+        },
+        {
+          "name": "Indus Towers",
+          "ticker": "INDUSTOWER.NS",
+          "aliases": [
+            "Indus Towers",
+            "INDUSTOWER"
+          ],
+          "index_weight": 0.15
+        },
+        {
+          "name": "Tata Communications",
+          "ticker": "TATACOMM.NS",
+          "aliases": [
+            "Tata Comms",
+            "Tata Communications",
+            "TATACOMM"
+          ],
+          "index_weight": 0.12
+        }
       ]
     },
     "Materials": {
       "color": "#f97316",
       "companies": [
-        {"name": "Linde", "ticker": "LIN", "aliases": ["Linde PLC", "LIN"]},
-        {"name": "Newmont", "ticker": "NEM", "aliases": ["Newmont Corp", "NEM"]},
-        {"name": "Freeport-McMoRan", "ticker": "FCX", "aliases": ["Freeport", "FCX"]}
+        {
+          "name": "JSW Steel",
+          "ticker": "JSWSTEEL.NS",
+          "aliases": [
+            "JSW Steel",
+            "JSWSTEEL"
+          ],
+          "index_weight": 0.28
+        },
+        {
+          "name": "Tata Steel",
+          "ticker": "TATASTEEL.NS",
+          "aliases": [
+            "Tata Steel",
+            "TATASTEEL"
+          ],
+          "index_weight": 0.22
+        },
+        {
+          "name": "UltraTech Cement",
+          "ticker": "ULTRACEMCO.NS",
+          "aliases": [
+            "UltraTech",
+            "UltraTech Cement",
+            "ULTRACEMCO"
+          ],
+          "index_weight": 0.2
+        },
+        {
+          "name": "Grasim Industries",
+          "ticker": "GRASIM.NS",
+          "aliases": [
+            "Grasim",
+            "GRASIM"
+          ],
+          "index_weight": 0.12
+        },
+        {
+          "name": "Hindalco Industries",
+          "ticker": "HINDALCO.NS",
+          "aliases": [
+            "Hindalco",
+            "HINDALCO"
+          ],
+          "index_weight": 0.1
+        },
+        {
+          "name": "Vedanta",
+          "ticker": "VEDL.NS",
+          "aliases": [
+            "Vedanta",
+            "VEDL",
+            "Vedanta Resources"
+          ],
+          "index_weight": 0.08
+        }
       ]
     }
   }
