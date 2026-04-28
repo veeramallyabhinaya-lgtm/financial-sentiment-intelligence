@@ -124,12 +124,39 @@ h1,h2,h3,h4 { font-family: 'Syne', sans-serif !important; color: #0f2d5e !import
 .be { background:#ede9fe; color:#6d28d9; }
 
 [data-testid="stTabs"] [data-baseweb="tab-list"] {
-    background:rgba(219,234,254,0.5) !important; border-radius:10px !important;
-    padding:0.2rem !important; gap:0.2rem !important;
+    background:rgba(219,234,254,0.5) !important;
+    border-radius:12px !important;
+    padding:0.25rem !important;
+    gap:0.25rem !important;
     border:1px solid rgba(147,197,253,0.3) !important;
+    width:100% !important;
+    display:flex !important;
 }
-[data-testid="stTabs"] [data-baseweb="tab"] { border-radius:8px !important; font-family:'DM Sans',sans-serif !important; font-size:0.8rem !important; font-weight:500 !important; }
-[data-testid="stTabs"] [aria-selected="true"] { background:#2563eb !important; color:white !important; }
+[data-testid="stTabs"] [data-baseweb="tab"] {
+    border-radius:8px !important;
+    font-family:'DM Sans',sans-serif !important;
+    font-size:0.82rem !important;
+    font-weight:600 !important;
+    flex:1 1 0 !important;
+    text-align:center !important;
+    justify-content:center !important;
+    padding:0.5rem 0.25rem !important;
+    white-space:nowrap !important;
+    letter-spacing:0.01em !important;
+    color:#334155 !important;
+    transition: background 0.15s ease !important;
+}
+[data-testid="stTabs"] [data-baseweb="tab"]:hover {
+    background:rgba(37,99,235,0.08) !important;
+}
+[data-testid="stTabs"] [aria-selected="true"] {
+    background:#2563eb !important;
+    color:white !important;
+    box-shadow:0 2px 8px rgba(37,99,235,0.25) !important;
+}
+/* Remove default tab border/underline */
+[data-testid="stTabs"] [data-baseweb="tab-highlight"] { display:none !important; }
+[data-testid="stTabs"] [data-baseweb="tab-border"] { display:none !important; }
 [data-baseweb="tag"] { background:#dbeafe !important; border:1px solid #93c5fd !important; color:#1d4ed8 !important; border-radius:6px !important; }
 </style>
 """, unsafe_allow_html=True)
