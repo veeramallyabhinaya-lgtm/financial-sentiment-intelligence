@@ -8,7 +8,6 @@
 [![Groq](https://img.shields.io/badge/Groq-LLaMA--3.3_70B-FF6B35?style=for-the-badge)](https://groq.com)
 [![Streamlit](https://img.shields.io/badge/Streamlit-Dashboard-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)](https://streamlit.io)
 [![SQLite](https://img.shields.io/badge/SQLite-Local_DB-003B57?style=for-the-badge&logo=sqlite&logoColor=white)](https://sqlite.org)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
 
 [Overview](#-overview) · [Architecture](#-architecture) · [Pipeline](#-pipeline-in-depth) · [Calibration](#-calibration-system) · [Quickstart](#-quickstart) · [Configuration](#-configuration) · [Dashboard](#-dashboard) · [Results](#-results)
 
