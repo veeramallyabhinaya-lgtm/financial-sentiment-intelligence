@@ -11,7 +11,7 @@ venv/
 *.egg-info/
 
 # Data (don't commit the DB)
-data/*.db
+# data/*.db
 data/*.sqlite
 
 # IDE
