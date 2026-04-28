@@ -179,19 +179,27 @@ with t1:
         hd = []
         for s in sel_sectors:
             for pt in get_sector_sentiment_timeseries(s, hours=lookback)[-16:]:
-                hd.append({"Sector":s, "Hour":pt["hour"][8:13], "Sentiment":pt["avg_sentiment"]})
+                hd.append({"Sector":s, "Hour":pt["hour"][5:13].replace("T"," "), "Sentiment":pt["avg_sentiment"]})
         if hd:
-            piv = pd.DataFrame(hd).pivot_table(index="Sector", columns="Hour", values="Sentiment", aggfunc="mean")
+            piv = pd.DataFrame(hd).pivot_table(index="Sector", columns="Hour", values="Sentiment", aggfunc="mean", fill_value=0)
             fh = px.imshow(piv, color_continuous_scale=[[0,"#fca5a5"],[.5,"#e0f2fe"],[1,"#34d399"]], zmin=-1, zmax=1, aspect="auto")
             fh.update_layout(
-                height=290, margin=dict(l=130,r=90,t=28,b=44),
-                paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
-                font=dict(family="DM Sans, sans-serif", color="#334155", size=11),
-                xaxis=dict(title=dict(text="Hour",font=dict(size=10)), tickfont=dict(size=10), showline=False),
-                yaxis=dict(tickfont=dict(size=11), showline=False),
+                height=300, margin=dict(l=140,r=95,t=28,b=52),
+                paper_bgcolor="rgba(255,255,255,0)", plot_bgcolor="rgba(255,255,255,0)",
+                font=dict(family="DM Sans, sans-serif", color="#1e293b", size=12),
+                xaxis=dict(
+                    title=dict(text="Hour (MM-DD HH)", font=dict(size=11, color="#1e293b")),
+                    tickfont=dict(size=10, color="#1e293b"),
+                    tickangle=-30, showline=False,
+                ),
+                yaxis=dict(
+                    tickfont=dict(size=12, color="#1e293b"),
+                    showline=False,
+                ),
                 coloraxis_colorbar=dict(
                     tickvals=[-1,0,1], ticktext=["Bearish","Neutral","Bullish"],
-                    len=0.85, thickness=14, outlinewidth=0, tickfont=dict(size=10), title="",
+                    len=0.85, thickness=14, outlinewidth=0,
+                    tickfont=dict(size=11, color="#1e293b"), title="",
                 )
             )
             fh.update_traces(hovertemplate="<b>%{y}</b><br>%{x}<br>Sentiment: %{z:.2f}<extra></extra>")
@@ -242,15 +250,21 @@ with t2:
             hovertemplate="<b>%{y}</b><br>Sentiment: %{x:.3f}<br>Articles: %{customdata[0]}<extra></extra>",
         ))
         fig2.update_layout(
-            height=max(300, len(df_co)*28),
-            margin=dict(l=170, r=60, t=32, b=24),
-            paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
-            font=dict(family="DM Sans, sans-serif", color="#334155", size=11),
-            xaxis=dict(range=[-1.18,1.18], tickvals=[-1,-.5,0,.5,1],
-                       ticktext=["-1.0","-0.5","0","+0.5","+1.0"],
-                       gridcolor="rgba(147,197,253,.2)", showline=False, tickfont=dict(size=10)),
-            yaxis=dict(autorange="reversed", tickfont=dict(size=11), showline=False,
-                       gridcolor="rgba(147,197,253,.2)"),
+            height=max(320, len(df_co)*30),
+            margin=dict(l=185, r=65, t=32, b=24),
+            paper_bgcolor="rgba(255,255,255,0)", plot_bgcolor="rgba(255,255,255,0)",
+            font=dict(family="DM Sans, sans-serif", color="#1e293b", size=12),
+            xaxis=dict(
+                range=[-1.18,1.18], tickvals=[-1,-.5,0,.5,1],
+                ticktext=["-1.0","-0.5","0","+0.5","+1.0"],
+                gridcolor="rgba(147,197,253,.25)", showline=False,
+                tickfont=dict(size=11, color="#1e293b"),
+            ),
+            yaxis=dict(
+                autorange="reversed", showline=False,
+                gridcolor="rgba(147,197,253,.25)",
+                tickfont=dict(size=12, color="#1e293b"),
+            ),
             shapes=[dict(type="line",x0=0,x1=0,y0=-.5,y1=len(df_co)-.5,
                          line=dict(color="#93c5fd",width=1,dash="dot"))],
         )
@@ -281,15 +295,21 @@ with t3:
             ))
             f3.add_hline(y=0, line_dash="dot", line_color="#93c5fd", line_width=1)
             f3.update_layout(
-                height=330, margin=dict(l=70,r=24,t=32,b=64),
-                paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
-                font=dict(family="DM Sans, sans-serif", color="#334155", size=11),
-                xaxis=dict(showticklabels=True, tickangle=-30, tickfont=dict(size=9),
-                           gridcolor="rgba(147,197,253,.2)", showline=False),
-                yaxis=dict(range=[-1.1,1.1], tickvals=[-1,-.5,0,.5,1],
-                           ticktext=["-1.0","-0.5","0","+0.5","+1.0"],
-                           title=dict(text="Sentiment Score", font=dict(size=10)),
-                           gridcolor="rgba(147,197,253,.2)", showline=False, tickfont=dict(size=10)),
+                height=340, margin=dict(l=80,r=28,t=32,b=72),
+                paper_bgcolor="rgba(255,255,255,0)", plot_bgcolor="rgba(255,255,255,0)",
+                font=dict(family="DM Sans, sans-serif", color="#1e293b", size=12),
+                xaxis=dict(
+                    showticklabels=True, tickangle=-30,
+                    tickfont=dict(size=10, color="#1e293b"),
+                    gridcolor="rgba(147,197,253,.25)", showline=False,
+                ),
+                yaxis=dict(
+                    range=[-1.1,1.1], tickvals=[-1,-.5,0,.5,1],
+                    ticktext=["-1.0","-0.5","0","+0.5","+1.0"],
+                    title=dict(text="Sentiment", font=dict(size=11, color="#1e293b")),
+                    gridcolor="rgba(147,197,253,.25)", showline=False,
+                    tickfont=dict(size=11, color="#1e293b"),
+                ),
             )
             st.plotly_chart(f3, use_container_width=True, config={"displayModeBar":False})
         else:
@@ -312,17 +332,27 @@ with t3:
         if has_d:
             fa.add_hline(y=0, line_dash="dot", line_color="#93c5fd", line_width=1)
             fa.update_layout(
-                height=380, margin=dict(l=70,r=24,t=32,b=80),
-                paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
-                font=dict(family="DM Sans, sans-serif", color="#334155", size=11),
-                xaxis=dict(showticklabels=True, tickangle=-30, tickfont=dict(size=9),
-                           gridcolor="rgba(147,197,253,.2)", showline=False),
-                yaxis=dict(range=[-1.1,1.1], tickvals=[-1,-.5,0,.5,1],
-                           ticktext=["-1.0","-0.5","0","+0.5","+1.0"],
-                           title=dict(text="Sentiment Score", font=dict(size=10)),
-                           gridcolor="rgba(147,197,253,.2)", showline=False, tickfont=dict(size=10)),
-                legend=dict(orientation="h", y=-0.18, font=dict(size=10),
-                            bgcolor="rgba(255,255,255,.6)", bordercolor="rgba(147,197,253,.4)", borderwidth=1),
+                height=400, margin=dict(l=80,r=28,t=32,b=100),
+                paper_bgcolor="rgba(255,255,255,0)", plot_bgcolor="rgba(255,255,255,0)",
+                font=dict(family="DM Sans, sans-serif", color="#1e293b", size=12),
+                xaxis=dict(
+                    showticklabels=True, tickangle=-30,
+                    tickfont=dict(size=10, color="#1e293b"),
+                    gridcolor="rgba(147,197,253,.25)", showline=False,
+                ),
+                yaxis=dict(
+                    range=[-1.1,1.1], tickvals=[-1,-.5,0,.5,1],
+                    ticktext=["-1.0","-0.5","0","+0.5","+1.0"],
+                    title=dict(text="Sentiment", font=dict(size=11, color="#1e293b")),
+                    gridcolor="rgba(147,197,253,.25)", showline=False,
+                    tickfont=dict(size=11, color="#1e293b"),
+                ),
+                legend=dict(
+                    orientation="h", y=-0.22,
+                    font=dict(size=11, color="#1e293b"),
+                    bgcolor="rgba(255,255,255,.7)",
+                    bordercolor="rgba(147,197,253,.5)", borderwidth=1,
+                ),
             )
             st.plotly_chart(fa, use_container_width=True, config={"displayModeBar":False})
         else:
