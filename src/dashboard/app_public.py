@@ -158,13 +158,47 @@ h1,h2,h3,h4 { font-family: 'Syne', sans-serif !important; color: #0f2d5e !import
 [data-testid="stTabs"] [data-baseweb="tab-highlight"] { display:none !important; }
 [data-testid="stTabs"] [data-baseweb="tab-border"] { display:none !important; }
 [data-baseweb="tag"] { background:#dbeafe !important; border:1px solid #93c5fd !important; color:#1d4ed8 !important; border-radius:6px !important; }
+
+/* ── Selectbox / dropdown fix (Streamlit Cloud dark override) ── */
+[data-baseweb="select"] > div {
+    background: rgba(255,255,255,0.85) !important;
+    border: 1px solid rgba(147,197,253,0.6) !important;
+    border-radius: 10px !important;
+    color: #0f2d5e !important;
+}
+[data-baseweb="select"] span {
+    color: #0f2d5e !important;
+}
+[data-baseweb="popover"] {
+    background: #ffffff !important;
+    border: 1px solid rgba(147,197,253,0.5) !important;
+    border-radius: 10px !important;
+}
+[role="option"] {
+    background: #ffffff !important;
+    color: #0f2d5e !important;
+}
+[role="option"]:hover {
+    background: #dbeafe !important;
+}
+/* Radio buttons */
+[data-testid="stRadio"] label {
+    color: #0f2d5e !important;
+    font-family: 'DM Sans', sans-serif !important;
+    font-size: 0.82rem !important;
+}
+/* Slider track */
+[data-testid="stSlider"] [data-baseweb="slider"] div[role="slider"] {
+    background: #2563eb !important;
+    border-color: #2563eb !important;
+}
 </style>
 """, unsafe_allow_html=True)
 
 
 def _plotly_base(h=300):
     return dict(
-        height=h, margin=dict(l=8,r=8,t=24,b=8),
+        height=h, margin=dict(l=160,r=48,t=32,b=24),
         paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
         font=dict(family="DM Sans, sans-serif", color="#334155", size=11),
         xaxis=dict(gridcolor="rgba(147,197,253,0.2)", showline=False, tickfont=dict(size=10)),
@@ -256,7 +290,19 @@ with t1:
         if hd:
             piv = pd.DataFrame(hd).pivot_table(index="Sector", columns="Hour", values="Sentiment", aggfunc="mean")
             fh = px.imshow(piv, color_continuous_scale=[[0,"#fca5a5"],[0.5,"#e0f2fe"],[1,"#34d399"]], zmin=-1, zmax=1, aspect="auto")
-            fh.update_layout(**_plotly_base(260), coloraxis_colorbar=dict(tickvals=[-1,0,1], ticktext=["Bearish","Neutral","Bullish"], len=0.8, thickness=12, title=""))
+            fh.update_layout(
+                height=280,
+                margin=dict(l=120,r=80,t=24,b=40),
+                paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+                font=dict(family="DM Sans, sans-serif", color="#334155", size=11),
+                xaxis=dict(showticklabels=True, tickfont=dict(size=10), title="Hour", titlefont=dict(size=10)),
+                yaxis=dict(tickfont=dict(size=11), showline=False),
+                coloraxis_colorbar=dict(
+                    tickvals=[-1,0,1], ticktext=["Bearish","Neutral","Bullish"],
+                    len=0.8, thickness=14, title="",
+                    tickfont=dict(size=10), outlinewidth=0,
+                )
+            )
             fh.update_traces(hovertemplate="<b>%{y}</b><br>Hour: %{x}<br>Sentiment: %{z:.2f}<extra></extra>")
             st.plotly_chart(fh, use_container_width=True, config={"displayModeBar": False})
         else:
@@ -330,7 +376,15 @@ with t3:
                 fill="tozeroy", fillcolor=f"rgba({r},{g},{b},0.07)",
                 hovertemplate="%{x}<br>Sentiment: %{y:.3f}<extra></extra>"))
             f3.add_hline(y=0,line_dash="dot",line_color="#93c5fd",line_width=1)
-            b3 = _plotly_base(300); b3["yaxis"]["range"] = [-1.1,1.1]; b3["xaxis"]["showticklabels"] = False
+            b3 = _plotly_base(320)
+            b3["yaxis"]["range"] = [-1.1,1.1]
+            b3["yaxis"]["tickvals"] = [-1,-0.5,0,0.5,1]
+            b3["yaxis"]["ticktext"] = ["-1.0","−0.5","0","0.5","1.0"]
+            b3["yaxis"]["title"] = dict(text="Sentiment", font=dict(size=10))
+            b3["xaxis"]["showticklabels"] = True
+            b3["xaxis"]["tickangle"] = -30
+            b3["xaxis"]["tickfont"] = dict(size=9)
+            b3["margin"] = dict(l=60,r=20,t=32,b=60)
             f3.update_layout(**b3)
             st.plotly_chart(f3, use_container_width=True, config={"displayModeBar": False})
         else:
@@ -346,7 +400,14 @@ with t3:
                 hovertemplate=f"<b>{s}</b><br>%{{x}}<br>%{{y:.3f}}<extra></extra>"))
         if has_d:
             fa.add_hline(y=0,line_dash="dot",line_color="#93c5fd",line_width=1)
-            ba = _plotly_base(340); ba["yaxis"]["range"] = [-1.1,1.1]; ba["xaxis"]["showticklabels"] = False
+            ba = _plotly_base(360)
+            ba["yaxis"]["range"] = [-1.1,1.1]
+            ba["yaxis"]["tickvals"] = [-1,-0.5,0,0.5,1]
+            ba["yaxis"]["title"] = dict(text="Sentiment", font=dict(size=10))
+            ba["xaxis"]["showticklabels"] = True
+            ba["xaxis"]["tickangle"] = -30
+            ba["xaxis"]["tickfont"] = dict(size=9)
+            ba["margin"] = dict(l=60,r=20,t=32,b=80)
             ba["legend"] = dict(orientation="h",y=-0.05,font=dict(size=10))
             fa.update_layout(**ba)
             st.plotly_chart(fa, use_container_width=True, config={"displayModeBar": False})
