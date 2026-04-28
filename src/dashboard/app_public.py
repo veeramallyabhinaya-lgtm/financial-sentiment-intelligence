@@ -181,19 +181,19 @@ with fc3:
     min_art = st.slider("ma", 1, 10, 1, label_visibility="collapsed")
 with fc4:
     st.markdown('<div class="filter-label">&nbsp;</div>', unsafe_allow_html=True)
-    last_update = articles[0].get("fetched_at", "")[:16].replace("T", " ") if articles else "—"
-    st.markdown(f'<div style="font-size:0.68rem;color:#475569;padding-top:0.6rem;">Updated<br><b>{last_update} UTC</b></div>', unsafe_allow_html=True)
+    st.markdown('<div style="font-size:0.68rem;color:#475569;padding-top:0.6rem;">Daily updated</div>', unsafe_allow_html=True)
 st.markdown('</div>', unsafe_allow_html=True)
 
 articles, companies, signals = _load(lookback, min_art)
 
 # Public notice
-st.markdown("""
+last_update = articles[0].get("fetched_at", "")[:16].replace("T", " ") if articles else "—"
+st.markdown(f"""
 <div style="background:rgba(219,234,254,0.5);border:1px solid rgba(147,197,253,0.4);
      border-radius:10px;padding:0.6rem 1.1rem;margin-bottom:0.75rem;
      font-size:0.75rem;color:#1e40af;display:flex;align-items:center;gap:0.5rem;">
   <span>ℹ️</span>
-  <span>This is a read-only view of the analysis dashboard. Data is refreshed daily.
+  <span>Read-only analysis dashboard. Last updated: <b>{last_update} UTC</b>.
   View the full project on
   <a href="https://github.com/harshbokadia/financial-sentiment-intelligence"
      target="_blank" style="color:#1d4ed8;font-weight:600;">GitHub →</a></span>
