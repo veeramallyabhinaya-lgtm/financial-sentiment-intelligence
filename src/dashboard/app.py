@@ -1,6 +1,6 @@
 """
-India Market Sentiment Intelligence — Local Dashboard
-Run: streamlit run src/dashboard/app.py
+India Market Sentiment Intelligence — Public Dashboard (Streamlit Cloud)
+Run: streamlit run src/dashboard/app_public.py
 """
 import sys
 from pathlib import Path
@@ -17,6 +17,7 @@ from src.storage.db import (
     get_recent_articles,
     get_recent_signals,
     get_sector_sentiment_timeseries,
+    get_total_articles_count,
 )
 
 SECTORS = ["Technology","Finance","Healthcare","Energy","Consumer","Industrials","Telecom","Materials"]
@@ -104,14 +105,16 @@ def _chart(h=300, lm=160, rm=48, tm=32, bm=24):
 
 @st.cache_data(ttl=300)
 def _load(lb, ma):
-    arts = get_recent_articles(hours=lb)
-    cos  = [c for c in get_company_sentiment_summary(hours=lb) if c["article_count"] >= ma]
-    sigs = get_recent_signals(hours=lb * 3)
-    return arts, cos, sigs
+    all_arts   = get_recent_articles(hours=None)
+    chart_arts = get_recent_articles(hours=lb)
+    cos        = [c for c in get_company_sentiment_summary(hours=lb) if c["article_count"] >= ma]
+    sigs       = get_recent_signals(hours=lb * 3)
+    lifetime   = get_total_articles_count()
+    return all_arts, chart_arts, cos, sigs, lifetime
 
 
 # ── HERO ──────────────────────────────────────────────────────────────────────
-HERO_SUB = "Groq LLaMA-3.3 70B &nbsp;·&nbsp; 47 feeds incl. ET, Mint, Moneycontrol, Business Standard &nbsp;·&nbsp; Nifty 50 constituents &nbsp;·&nbsp; 8 sectors &nbsp;·&nbsp; RBI &amp; SEBI signals"
+HERO_SUB = "Real-time NLP analysis of Indian financial news &nbsp;·&nbsp; Nifty 50 constituents &nbsp;·&nbsp; 8 sectors &nbsp;·&nbsp; ET · Mint · Moneycontrol · Business Standard · RBI · SEBI"
 st.markdown(f"""
 <div class="hero">
   <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.4rem;">
@@ -127,7 +130,7 @@ st.markdown('<div class="filter-bar">', unsafe_allow_html=True)
 fc1, fc2, fc3, fc4 = st.columns([2,3,2,1])
 with fc1:
     st.markdown('<span class="filter-label">⏱ Lookback window</span>', unsafe_allow_html=True)
-    lookback = st.slider("lb", 6, 72, 24, step=6, label_visibility="collapsed")
+    lookback = st.slider("lb", 6, 240, 48, step=6, label_visibility="collapsed")
 with fc2:
     st.markdown('<span class="filter-label">🏭 Sectors</span>', unsafe_allow_html=True)
     sel_sectors = st.multiselect("sec", SECTORS, default=SECTORS, label_visibility="collapsed")
@@ -136,13 +139,51 @@ with fc3:
     min_art = st.slider("ma", 1, 10, 1, label_visibility="collapsed")
 with fc4:
     st.markdown('<span class="filter-label">↻</span>', unsafe_allow_html=True)
-    if st.button("Refresh", use_container_width=True):
-        st.cache_data.clear(); st.rerun()
+    st.markdown('<div style="font-size:.68rem;color:#475569;padding-top:.5rem;">Daily updated</div>', unsafe_allow_html=True)
 st.markdown('</div>', unsafe_allow_html=True)
 
-articles, companies, signals = _load(lookback, min_art)
+all_articles, articles, companies, signals, lifetime = _load(lookback, min_art)
 
-# (no notice for local app)
+# ── LIFETIME STATS BANNER ────────────────────────────────────────────────────
+st.markdown(f"""
+<div style="display:flex;align-items:center;gap:2rem;
+     background:rgba(255,255,255,.6);backdrop-filter:blur(8px);
+     border:1px solid rgba(186,230,253,.6);border-radius:14px;
+     padding:.85rem 1.75rem;margin-bottom:.85rem;">
+  <div style="text-align:center;flex:1;">
+    <div style="font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800;color:#1d4ed8;line-height:1;">{lifetime["total_ingested"]:,}</div>
+    <div style="font-size:.65rem;color:#64748b;font-weight:500;text-transform:uppercase;letter-spacing:.08em;margin-top:.2rem;">Articles Ingested (Lifetime)</div>
+  </div>
+  <div style="width:1px;height:40px;background:rgba(147,197,253,.5);"></div>
+  <div style="text-align:center;flex:1;">
+    <div style="font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800;color:#1d4ed8;line-height:1;">{lifetime["total_scored"]:,}</div>
+    <div style="font-size:.65rem;color:#64748b;font-weight:500;text-transform:uppercase;letter-spacing:.08em;margin-top:.2rem;">Articles Scored (Lifetime)</div>
+  </div>
+  <div style="width:1px;height:40px;background:rgba(147,197,253,.5);"></div>
+  <div style="text-align:center;flex:1;">
+    <div style="font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800;color:#1d4ed8;line-height:1;">{lifetime["unique_sources"]}</div>
+    <div style="font-size:.65rem;color:#64748b;font-weight:500;text-transform:uppercase;letter-spacing:.08em;margin-top:.2rem;">Unique Sources</div>
+  </div>
+  <div style="width:1px;height:40px;background:rgba(147,197,253,.5);"></div>
+  <div style="text-align:center;flex:1;">
+    <div style="font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800;color:#1d4ed8;line-height:1;">{lifetime["unique_companies"]}</div>
+    <div style="font-size:.65rem;color:#64748b;font-weight:500;text-transform:uppercase;letter-spacing:.08em;margin-top:.2rem;">Companies Tracked (Lifetime)</div>
+  </div>
+</div>
+""", unsafe_allow_html=True)
+
+last_update = articles[0].get("fetched_at","")[:16].replace("T"," ") if articles else "—"
+st.markdown(f"""
+<div style="background:rgba(219,234,254,.5);border:1px solid rgba(147,197,253,.4);
+     border-radius:10px;padding:.6rem 1.1rem;margin-bottom:.75rem;
+     font-size:.75rem;color:#1e40af;display:flex;align-items:center;gap:.5rem;">
+  <span>ℹ️</span>
+  <span>Read-only analysis dashboard. Last updated: <b>{last_update} UTC</b>.
+  View the full project on
+  <a href="https://github.com/harshbokadia/financial-sentiment-intelligence"
+     target="_blank" style="color:#1d4ed8;font-weight:600;">GitHub →</a></span>
+</div>
+""", unsafe_allow_html=True)
 
 # ── METRICS ───────────────────────────────────────────────────────────────────
 all_scores = [v["score"] for a in articles for v in a.get("sentiment_scores",{}).values() if isinstance(v,dict)]
@@ -152,7 +193,7 @@ pct = sum(1 for a in articles if a.get("pipeline_ran"))/max(len(articles),1)*100
 for col,val,lbl in zip(
     st.columns(5),
     [len(articles),len(companies),len(signals),f"{overall:+.2f}",f"{pct:.0f}%"],
-    ["Articles Ingested","Companies Tracked","Signals Detected","Market Sentiment","Pipeline Coverage"]
+    [f"Articles (Last {lookback}h)","Companies Tracked","Signals Detected","Market Sentiment","Pipeline Coverage"]
 ):
     col.markdown(f'<div class="metric-tile"><div class="metric-value">{val}</div><div class="metric-label">{lbl}</div></div>', unsafe_allow_html=True)
 
@@ -169,19 +210,27 @@ with t1:
         hd = []
         for s in sel_sectors:
             for pt in get_sector_sentiment_timeseries(s, hours=lookback)[-16:]:
-                hd.append({"Sector":s, "Hour":pt["hour"][8:13], "Sentiment":pt["avg_sentiment"]})
+                hd.append({"Sector":s, "Hour":pt["hour"][5:13].replace("T"," "), "Sentiment":pt["avg_sentiment"]})
         if hd:
-            piv = pd.DataFrame(hd).pivot_table(index="Sector", columns="Hour", values="Sentiment", aggfunc="mean")
+            piv = pd.DataFrame(hd).pivot_table(index="Sector", columns="Hour", values="Sentiment", aggfunc="mean", fill_value=0)
             fh = px.imshow(piv, color_continuous_scale=[[0,"#fca5a5"],[.5,"#e0f2fe"],[1,"#34d399"]], zmin=-1, zmax=1, aspect="auto")
             fh.update_layout(
-                height=290, margin=dict(l=130,r=90,t=28,b=44),
-                paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
-                font=dict(family="DM Sans, sans-serif", color="#334155", size=11),
-                xaxis=dict(title=dict(text="Hour",font=dict(size=10)), tickfont=dict(size=10), showline=False),
-                yaxis=dict(tickfont=dict(size=11), showline=False),
+                height=300, margin=dict(l=140,r=95,t=28,b=52),
+                paper_bgcolor="rgba(255,255,255,0)", plot_bgcolor="rgba(255,255,255,0)",
+                font=dict(family="DM Sans, sans-serif", color="#1e293b", size=12),
+                xaxis=dict(
+                    title=dict(text="Hour (MM-DD HH)", font=dict(size=11, color="#1e293b")),
+                    tickfont=dict(size=10, color="#1e293b"),
+                    tickangle=-30, showline=False,
+                ),
+                yaxis=dict(
+                    tickfont=dict(size=12, color="#1e293b"),
+                    showline=False,
+                ),
                 coloraxis_colorbar=dict(
                     tickvals=[-1,0,1], ticktext=["Bearish","Neutral","Bullish"],
-                    len=0.85, thickness=14, outlinewidth=0, tickfont=dict(size=10), title="",
+                    len=0.85, thickness=14, outlinewidth=0,
+                    tickfont=dict(size=11, color="#1e293b"), title="",
                 )
             )
             fh.update_traces(hovertemplate="<b>%{y}</b><br>%{x}<br>Sentiment: %{z:.2f}<extra></extra>")
@@ -232,15 +281,21 @@ with t2:
             hovertemplate="<b>%{y}</b><br>Sentiment: %{x:.3f}<br>Articles: %{customdata[0]}<extra></extra>",
         ))
         fig2.update_layout(
-            height=max(300, len(df_co)*28),
-            margin=dict(l=170, r=60, t=32, b=24),
-            paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
-            font=dict(family="DM Sans, sans-serif", color="#334155", size=11),
-            xaxis=dict(range=[-1.18,1.18], tickvals=[-1,-.5,0,.5,1],
-                       ticktext=["-1.0","-0.5","0","+0.5","+1.0"],
-                       gridcolor="rgba(147,197,253,.2)", showline=False, tickfont=dict(size=10)),
-            yaxis=dict(autorange="reversed", tickfont=dict(size=11), showline=False,
-                       gridcolor="rgba(147,197,253,.2)"),
+            height=max(320, len(df_co)*30),
+            margin=dict(l=185, r=65, t=32, b=24),
+            paper_bgcolor="rgba(255,255,255,0)", plot_bgcolor="rgba(255,255,255,0)",
+            font=dict(family="DM Sans, sans-serif", color="#1e293b", size=12),
+            xaxis=dict(
+                range=[-1.18,1.18], tickvals=[-1,-.5,0,.5,1],
+                ticktext=["-1.0","-0.5","0","+0.5","+1.0"],
+                gridcolor="rgba(147,197,253,.25)", showline=False,
+                tickfont=dict(size=11, color="#1e293b"),
+            ),
+            yaxis=dict(
+                autorange="reversed", showline=False,
+                gridcolor="rgba(147,197,253,.25)",
+                tickfont=dict(size=12, color="#1e293b"),
+            ),
             shapes=[dict(type="line",x0=0,x1=0,y0=-.5,y1=len(df_co)-.5,
                          line=dict(color="#93c5fd",width=1,dash="dot"))],
         )
@@ -271,15 +326,21 @@ with t3:
             ))
             f3.add_hline(y=0, line_dash="dot", line_color="#93c5fd", line_width=1)
             f3.update_layout(
-                height=330, margin=dict(l=70,r=24,t=32,b=64),
-                paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
-                font=dict(family="DM Sans, sans-serif", color="#334155", size=11),
-                xaxis=dict(showticklabels=True, tickangle=-30, tickfont=dict(size=9),
-                           gridcolor="rgba(147,197,253,.2)", showline=False),
-                yaxis=dict(range=[-1.1,1.1], tickvals=[-1,-.5,0,.5,1],
-                           ticktext=["-1.0","-0.5","0","+0.5","+1.0"],
-                           title=dict(text="Sentiment Score", font=dict(size=10)),
-                           gridcolor="rgba(147,197,253,.2)", showline=False, tickfont=dict(size=10)),
+                height=340, margin=dict(l=80,r=28,t=32,b=72),
+                paper_bgcolor="rgba(255,255,255,0)", plot_bgcolor="rgba(255,255,255,0)",
+                font=dict(family="DM Sans, sans-serif", color="#1e293b", size=12),
+                xaxis=dict(
+                    showticklabels=True, tickangle=-30,
+                    tickfont=dict(size=10, color="#1e293b"),
+                    gridcolor="rgba(147,197,253,.25)", showline=False,
+                ),
+                yaxis=dict(
+                    range=[-1.1,1.1], tickvals=[-1,-.5,0,.5,1],
+                    ticktext=["-1.0","-0.5","0","+0.5","+1.0"],
+                    title=dict(text="Sentiment", font=dict(size=11, color="#1e293b")),
+                    gridcolor="rgba(147,197,253,.25)", showline=False,
+                    tickfont=dict(size=11, color="#1e293b"),
+                ),
             )
             st.plotly_chart(f3, use_container_width=True, config={"displayModeBar":False})
         else:
@@ -302,17 +363,27 @@ with t3:
         if has_d:
             fa.add_hline(y=0, line_dash="dot", line_color="#93c5fd", line_width=1)
             fa.update_layout(
-                height=380, margin=dict(l=70,r=24,t=32,b=80),
-                paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
-                font=dict(family="DM Sans, sans-serif", color="#334155", size=11),
-                xaxis=dict(showticklabels=True, tickangle=-30, tickfont=dict(size=9),
-                           gridcolor="rgba(147,197,253,.2)", showline=False),
-                yaxis=dict(range=[-1.1,1.1], tickvals=[-1,-.5,0,.5,1],
-                           ticktext=["-1.0","-0.5","0","+0.5","+1.0"],
-                           title=dict(text="Sentiment Score", font=dict(size=10)),
-                           gridcolor="rgba(147,197,253,.2)", showline=False, tickfont=dict(size=10)),
-                legend=dict(orientation="h", y=-0.18, font=dict(size=10),
-                            bgcolor="rgba(255,255,255,.6)", bordercolor="rgba(147,197,253,.4)", borderwidth=1),
+                height=400, margin=dict(l=80,r=28,t=32,b=100),
+                paper_bgcolor="rgba(255,255,255,0)", plot_bgcolor="rgba(255,255,255,0)",
+                font=dict(family="DM Sans, sans-serif", color="#1e293b", size=12),
+                xaxis=dict(
+                    showticklabels=True, tickangle=-30,
+                    tickfont=dict(size=10, color="#1e293b"),
+                    gridcolor="rgba(147,197,253,.25)", showline=False,
+                ),
+                yaxis=dict(
+                    range=[-1.1,1.1], tickvals=[-1,-.5,0,.5,1],
+                    ticktext=["-1.0","-0.5","0","+0.5","+1.0"],
+                    title=dict(text="Sentiment", font=dict(size=11, color="#1e293b")),
+                    gridcolor="rgba(147,197,253,.25)", showline=False,
+                    tickfont=dict(size=11, color="#1e293b"),
+                ),
+                legend=dict(
+                    orientation="h", y=-0.22,
+                    font=dict(size=11, color="#1e293b"),
+                    bgcolor="rgba(255,255,255,.7)",
+                    bordercolor="rgba(147,197,253,.5)", borderwidth=1,
+                ),
             )
             st.plotly_chart(fa, use_container_width=True, config={"displayModeBar":False})
         else:
@@ -322,7 +393,7 @@ with t3:
 # ── TAB 4: ARTICLE FEED ───────────────────────────────────────────────────────
 with t4:
     af1, af2, af3 = st.columns(3)
-    with af1: src_f = st.selectbox("Source", ["All"]+sorted(set(a.get("source","") for a in articles)))
+    with af1: src_f = st.selectbox("Source", ["All"]+sorted(set(a.get("source","") for a in all_articles)))
     with af2: sen_f = st.selectbox("Sentiment", ["All","Positive","Negative","Neutral"])
     with af3: sec_f = st.selectbox("Sector", ["All"]+SECTORS)
     show_n = st.slider("Articles to show", 5, 50, 20)
@@ -335,7 +406,7 @@ with t4:
         if v is None: return "Neutral"
         return "Positive" if v>.1 else ("Negative" if v<-.1 else "Neutral")
 
-    filt = articles
+    filt = all_articles
     if src_f != "All": filt = [a for a in filt if a.get("source")==src_f]
     if sec_f != "All": filt = [a for a in filt if sec_f in a.get("sectors",[])]
     if sen_f != "All": filt = [a for a in filt if _lbl(a)==sen_f]
@@ -364,8 +435,11 @@ with t4:
         imp = art.get("news_importance",None)
         imp_badge = f'<span style="background:#fef3c7;color:#92400e;padding:.13rem .4rem;border-radius:5px;font-size:.62rem;font-weight:600;">⚡ {imp:.2f}</span>' if imp else ""
 
+        fetched = art.get("fetched_at","")[:16].replace("T"," ")
+        fetched_badge = f'<span style="font-size:.62rem;color:#2563eb;font-weight:600;background:rgba(37,99,235,.08);padding:.1rem .4rem;border-radius:5px;">📥 Fetched {fetched} UTC</span>'
         st.markdown(f"""
         <div class="article-card">
+          <div style="margin-bottom:.3rem;">{fetched_badge}</div>
           <div class="article-title"><a href="{art.get('url','#')}" target="_blank" style="color:#0f2d5e;text-decoration:none;">{art.get('title','Untitled')}</a></div>
           {su}
           <div style="display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;font-size:.65rem;color:#94a3b8;">
@@ -378,10 +452,12 @@ with t4:
         st.info("No articles match the current filters.")
 
 # ── FOOTER ────────────────────────────────────────────────────────────────────
-st.markdown(f"""
+st.markdown("""
 <div style="text-align:center;padding:1.5rem 0 .5rem;font-size:.68rem;color:#94a3b8;font-family:'DM Sans',sans-serif;">
   India Market Sentiment Intelligence &nbsp;·&nbsp;
   Built by <a href="https://linkedin.com/in/-harsh-bokadia/" target="_blank" style="color:#2563eb;text-decoration:none;font-weight:600;">Harsh Bokadia</a>
-  &nbsp;·&nbsp; Last refreshed {datetime.now().strftime("%H:%M")}
+  &nbsp;·&nbsp;
+  <a href="https://github.com/harshbokadia/financial-sentiment-intelligence" target="_blank" style="color:#2563eb;text-decoration:none;">View on GitHub</a>
+  &nbsp;·&nbsp; Data updated daily
 </div>
 """, unsafe_allow_html=True)

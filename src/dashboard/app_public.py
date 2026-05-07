@@ -17,6 +17,7 @@ from src.storage.db import (
     get_recent_articles,
     get_recent_signals,
     get_sector_sentiment_timeseries,
+    get_total_articles_count,
 )
 
 SECTORS = ["Technology","Finance","Healthcare","Energy","Consumer","Industrials","Telecom","Materials"]
@@ -104,10 +105,12 @@ def _chart(h=300, lm=160, rm=48, tm=32, bm=24):
 
 @st.cache_data(ttl=300)
 def _load(lb, ma):
-    arts = get_recent_articles(hours=lb)
-    cos  = [c for c in get_company_sentiment_summary(hours=lb) if c["article_count"] >= ma]
-    sigs = get_recent_signals(hours=lb * 3)
-    return arts, cos, sigs
+    all_arts   = get_recent_articles(hours=None)
+    chart_arts = get_recent_articles(hours=lb)
+    cos        = [c for c in get_company_sentiment_summary(hours=lb) if c["article_count"] >= ma]
+    sigs       = get_recent_signals(hours=lb * 3)
+    lifetime   = get_total_articles_count()
+    return all_arts, chart_arts, cos, sigs, lifetime
 
 
 # ── HERO ──────────────────────────────────────────────────────────────────────
@@ -123,11 +126,39 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 # ── FILTER BAR ────────────────────────────────────────────────────────────────
+# ── LIFETIME STATS BANNER ────────────────────────────────────────────────────
+st.markdown(f"""
+<div style="display:flex;align-items:center;gap:2rem;
+     background:rgba(255,255,255,.6);backdrop-filter:blur(8px);
+     border:1px solid rgba(186,230,253,.6);border-radius:14px;
+     padding:.85rem 1.75rem;margin-bottom:.85rem;">
+  <div style="text-align:center;flex:1;">
+    <div style="font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800;color:#1d4ed8;line-height:1;">{lifetime["total_ingested"]:,}</div>
+    <div style="font-size:.65rem;color:#64748b;font-weight:500;text-transform:uppercase;letter-spacing:.08em;margin-top:.2rem;">Articles Ingested (Lifetime)</div>
+  </div>
+  <div style="width:1px;height:40px;background:rgba(147,197,253,.5);"></div>
+  <div style="text-align:center;flex:1;">
+    <div style="font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800;color:#1d4ed8;line-height:1;">{lifetime["total_scored"]:,}</div>
+    <div style="font-size:.65rem;color:#64748b;font-weight:500;text-transform:uppercase;letter-spacing:.08em;margin-top:.2rem;">Articles Scored (Lifetime)</div>
+  </div>
+  <div style="width:1px;height:40px;background:rgba(147,197,253,.5);"></div>
+  <div style="text-align:center;flex:1;">
+    <div style="font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800;color:#1d4ed8;line-height:1;">{lifetime["unique_sources"]}</div>
+    <div style="font-size:.65rem;color:#64748b;font-weight:500;text-transform:uppercase;letter-spacing:.08em;margin-top:.2rem;">Unique Sources</div>
+  </div>
+  <div style="width:1px;height:40px;background:rgba(147,197,253,.5);"></div>
+  <div style="text-align:center;flex:1;">
+    <div style="font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800;color:#1d4ed8;line-height:1;">{lifetime["unique_companies"]}</div>
+    <div style="font-size:.65rem;color:#64748b;font-weight:500;text-transform:uppercase;letter-spacing:.08em;margin-top:.2rem;">Companies Tracked (Lifetime)</div>
+  </div>
+</div>
+""", unsafe_allow_html=True)
+
 st.markdown('<div class="filter-bar">', unsafe_allow_html=True)
 fc1, fc2, fc3, fc4 = st.columns([2,3,2,1])
 with fc1:
     st.markdown('<span class="filter-label">⏱ Lookback window</span>', unsafe_allow_html=True)
-    lookback = st.slider("lb", 6, 72, 24, step=6, label_visibility="collapsed")
+    lookback = st.slider("lb", 6, 240, 48, step=6, label_visibility="collapsed")
 with fc2:
     st.markdown('<span class="filter-label">🏭 Sectors</span>', unsafe_allow_html=True)
     sel_sectors = st.multiselect("sec", SECTORS, default=SECTORS, label_visibility="collapsed")
@@ -139,7 +170,7 @@ with fc4:
     st.markdown('<div style="font-size:.68rem;color:#475569;padding-top:.5rem;">Daily updated</div>', unsafe_allow_html=True)
 st.markdown('</div>', unsafe_allow_html=True)
 
-articles, companies, signals = _load(lookback, min_art)
+all_articles, articles, companies, signals, lifetime = _load(lookback, min_art)
 
 last_update = articles[0].get("fetched_at","")[:16].replace("T"," ") if articles else "—"
 st.markdown(f"""
@@ -162,7 +193,7 @@ pct = sum(1 for a in articles if a.get("pipeline_ran"))/max(len(articles),1)*100
 for col,val,lbl in zip(
     st.columns(5),
     [len(articles),len(companies),len(signals),f"{overall:+.2f}",f"{pct:.0f}%"],
-    ["Articles Ingested","Companies Tracked","Signals Detected","Market Sentiment","Pipeline Coverage"]
+    [f"Articles (Last {lookback}h)","Companies Tracked","Signals Detected","Market Sentiment","Pipeline Coverage"]
 ):
     col.markdown(f'<div class="metric-tile"><div class="metric-value">{val}</div><div class="metric-label">{lbl}</div></div>', unsafe_allow_html=True)
 
@@ -362,7 +393,7 @@ with t3:
 # ── TAB 4: ARTICLE FEED ───────────────────────────────────────────────────────
 with t4:
     af1, af2, af3 = st.columns(3)
-    with af1: src_f = st.selectbox("Source", ["All"]+sorted(set(a.get("source","") for a in articles)))
+    with af1: src_f = st.selectbox("Source", ["All"]+sorted(set(a.get("source","") for a in all_articles)))
     with af2: sen_f = st.selectbox("Sentiment", ["All","Positive","Negative","Neutral"])
     with af3: sec_f = st.selectbox("Sector", ["All"]+SECTORS)
     show_n = st.slider("Articles to show", 5, 50, 20)
@@ -375,7 +406,7 @@ with t4:
         if v is None: return "Neutral"
         return "Positive" if v>.1 else ("Negative" if v<-.1 else "Neutral")
 
-    filt = articles
+    filt = all_articles
     if src_f != "All": filt = [a for a in filt if a.get("source")==src_f]
     if sec_f != "All": filt = [a for a in filt if sec_f in a.get("sectors",[])]
     if sen_f != "All": filt = [a for a in filt if _lbl(a)==sen_f]
@@ -404,8 +435,11 @@ with t4:
         imp = art.get("news_importance",None)
         imp_badge = f'<span style="background:#fef3c7;color:#92400e;padding:.13rem .4rem;border-radius:5px;font-size:.62rem;font-weight:600;">⚡ {imp:.2f}</span>' if imp else ""
 
+        fetched = art.get("fetched_at","")[:16].replace("T"," ")
+        fetched_badge = f'<span style="font-size:.62rem;color:#2563eb;font-weight:600;background:rgba(37,99,235,.08);padding:.1rem .4rem;border-radius:5px;">📥 Fetched {fetched} UTC</span>'
         st.markdown(f"""
         <div class="article-card">
+          <div style="margin-bottom:.3rem;">{fetched_badge}</div>
           <div class="article-title"><a href="{art.get('url','#')}" target="_blank" style="color:#0f2d5e;text-decoration:none;">{art.get('title','Untitled')}</a></div>
           {su}
           <div style="display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;font-size:.65rem;color:#94a3b8;">

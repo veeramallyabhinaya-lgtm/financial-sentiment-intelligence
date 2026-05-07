@@ -86,62 +86,171 @@ def init_db() -> None:
 
 
 def upsert_articles(items: list[dict[str, Any]]) -> int:
-    """Insert or replace processed articles. Returns count of new rows."""
+    """
+    Persist articles without ever overwriting existing scores.
+
+    Strategy:
+    - New articles (not in DB yet): inserted in full.
+    - Existing unscored articles (pipeline_ran=0): updated with new
+      pipeline results if this run scored them.
+    - Existing scored articles (pipeline_ran=1): metadata may update
+      (fetched_at), but scores, entities, sectors, summary are NEVER
+      overwritten — preserving accumulated scoring history across runs.
+    """
     if not items:
         return 0
 
-    rows = []
-    for item in items:
-        rows.append((
-            item["id"],
-            item.get("source", ""),
-            item.get("category", ""),
-            item.get("title", ""),
-            item.get("url", ""),
-            item.get("text", ""),
-            item.get("summary", ""),
-            item.get("news_type", "company_specific"),
-            float(item.get("news_importance", 0.5)),
-            item.get("published_at", ""),
-            item.get("fetched_at", ""),
-            int(item.get("pipeline_ran", False)),
-            json.dumps(item.get("entities", [])),
-            json.dumps(item.get("sectors", [])),
-            json.dumps(item.get("sentiment_scores", {})),
-        ))
-
     with _get_conn() as conn:
-        conn.executemany("""
-            INSERT OR REPLACE INTO articles
-            (id, source, category, title, url, text, summary,
-             news_type, news_importance, published_at, fetched_at,
-             pipeline_ran, entities, sectors, sentiment_scores)
-            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
-        """, rows)
+        # Fetch which article IDs already exist and whether they're scored
+        existing_ids = {
+            row[0]: row[1]  # id -> pipeline_ran
+            for row in conn.execute(
+                "SELECT id, pipeline_ran FROM articles WHERE id IN ({})".format(
+                    ",".join("?" * len(items))
+                ),
+                [item["id"] for item in items],
+            ).fetchall()
+        }
 
-    logger.info("Upserted %d articles.", len(rows))
-    return len(rows)
+        new_rows      = []   # brand new articles
+        score_updates = []   # existing unscored → now scored
+        touch_updates = []   # existing scored → just update fetched_at
+
+        for item in items:
+            aid = item["id"]
+            already_scored = existing_ids.get(aid, -1)
+
+            if already_scored == -1:
+                # Never seen before — full insert
+                new_rows.append((
+                    aid,
+                    item.get("source", ""),
+                    item.get("category", ""),
+                    item.get("title", ""),
+                    item.get("url", ""),
+                    item.get("text", ""),
+                    item.get("summary", ""),
+                    item.get("news_type", "company_specific"),
+                    float(item.get("news_importance", 0.5)),
+                    item.get("published_at", ""),
+                    item.get("fetched_at", ""),
+                    int(item.get("pipeline_ran", False)),
+                    json.dumps(item.get("entities", [])),
+                    json.dumps(item.get("sectors", [])),
+                    json.dumps(item.get("sentiment_scores", {})),
+                ))
+
+            elif already_scored == 0 and item.get("pipeline_ran"):
+                # Was unscored, now has results — write the scores in
+                score_updates.append((
+                    item.get("summary", ""),
+                    item.get("news_type", "company_specific"),
+                    float(item.get("news_importance", 0.5)),
+                    item.get("fetched_at", ""),
+                    int(item.get("pipeline_ran", False)),
+                    json.dumps(item.get("entities", [])),
+                    json.dumps(item.get("sectors", [])),
+                    json.dumps(item.get("sentiment_scores", {})),
+                    aid,
+                ))
+
+            else:
+                # Already scored — only touch fetched_at, preserve everything else
+                touch_updates.append((
+                    item.get("fetched_at", ""),
+                    aid,
+                ))
+
+        if new_rows:
+            conn.executemany("""
+                INSERT INTO articles
+                (id, source, category, title, url, text, summary,
+                 news_type, news_importance, published_at, fetched_at,
+                 pipeline_ran, entities, sectors, sentiment_scores)
+                VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+            """, new_rows)
+
+        if score_updates:
+            conn.executemany("""
+                UPDATE articles SET
+                    summary          = ?,
+                    news_type        = ?,
+                    news_importance  = ?,
+                    fetched_at       = ?,
+                    pipeline_ran     = ?,
+                    entities         = ?,
+                    sectors          = ?,
+                    sentiment_scores = ?
+                WHERE id = ? AND pipeline_ran = 0
+            """, score_updates)
+
+        if touch_updates:
+            conn.executemany(
+                "UPDATE articles SET fetched_at = ? WHERE id = ?",
+                touch_updates,
+            )
+
+    total = len(new_rows) + len(score_updates) + len(touch_updates)
+    logger.info(
+        "Articles: %d new | %d scored | %d already-scored (preserved) | %d total.",
+        len(new_rows), len(score_updates), len(touch_updates), total,
+    )
+    return len(new_rows)
 
 
-def get_recent_articles(hours: int = 24, pipeline_ran: bool = True) -> list[dict]:
-    """Fetch articles from the last N hours."""
-    cutoff = (datetime.now(timezone.utc) - timedelta(hours=hours)).isoformat()
-    query = "SELECT * FROM articles WHERE published_at >= ?"
+def get_recent_articles(hours: int | None = None, pipeline_ran: bool = True) -> list[dict]:
+    """
+    Fetch scored articles from the database.
+
+    When hours=None (default), returns ALL scored articles ever stored —
+    nothing is filtered out. Articles accumulate permanently across runs.
+
+    When hours is set, filters to articles whose inserted_at (DB write time)
+    or published_at falls within the window — used by chart queries only.
+    """
+    if hours is not None:
+        cutoff = (datetime.now(timezone.utc) - timedelta(hours=hours)).isoformat()
+        query = """
+            SELECT * FROM articles
+            WHERE (inserted_at >= ? OR published_at >= ?)
+        """
+        params: list = [cutoff, cutoff]
+    else:
+        query = "SELECT * FROM articles WHERE 1=1"
+        params = []
+
     if pipeline_ran:
         query += " AND pipeline_ran = 1"
     query += " ORDER BY published_at DESC"
 
     with _get_conn() as conn:
-        rows = conn.execute(query, (cutoff,)).fetchall()
+        rows = conn.execute(query, params).fetchall()
 
     result = []
     for row in rows:
         d = dict(row)
-        d["entities"] = json.loads(d.get("entities") or "[]")
-        d["sectors"] = json.loads(d.get("sectors") or "[]")
+        d["entities"]         = json.loads(d.get("entities")         or "[]")
+        d["sectors"]          = json.loads(d.get("sectors")          or "[]")
         d["sentiment_scores"] = json.loads(d.get("sentiment_scores") or "{}")
         result.append(d)
     return result
+
+
+def get_total_articles_count() -> dict:
+    """Return lifetime ingestion stats — never filtered by time."""
+    with _get_conn() as conn:
+        total     = conn.execute("SELECT COUNT(*) FROM articles").fetchone()[0]
+        scored    = conn.execute("SELECT COUNT(*) FROM articles WHERE pipeline_ran=1").fetchone()[0]
+        sources   = conn.execute("SELECT COUNT(DISTINCT source) FROM articles").fetchone()[0]
+        companies = conn.execute(
+            "SELECT COUNT(DISTINCT json_each.value) FROM articles, json_each(entities) WHERE pipeline_ran=1"
+        ).fetchone()[0]
+    return {
+        "total_ingested": total,
+        "total_scored":   scored,
+        "unique_sources": sources,
+        "unique_companies": companies,
+    }
 
 
 def get_sector_sentiment_timeseries(sector: str, hours: int = 48) -> list[dict]:
