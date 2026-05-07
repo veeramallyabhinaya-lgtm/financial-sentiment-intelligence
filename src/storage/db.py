@@ -246,9 +246,9 @@ def get_total_articles_count() -> dict:
             "SELECT COUNT(DISTINCT json_each.value) FROM articles, json_each(entities) WHERE pipeline_ran=1"
         ).fetchone()[0]
     return {
-        "total_ingested": total,
-        "total_scored":   scored,
-        "unique_sources": sources,
+        "total_ingested":   total,
+        "total_scored":     scored,
+        "unique_sources":   sources,
         "unique_companies": companies,
     }
 
