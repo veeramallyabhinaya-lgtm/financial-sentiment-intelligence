@@ -76,7 +76,7 @@ def main():
         processed = [{**item, "pipeline_ran": False, "entities": [], "sectors": [], "sentiment_scores": {}} for item in items]
     else:
         from src.pipeline.orchestrator import run_pipeline_batch
-        processed = run_pipeline_batch(items, batch_size=10, delay=0.5)
+        processed = run_pipeline_batch(items, batch_size=1, delay=3)
 
     # ── 4. Store ──────────────────────────────────────────────
     from src.storage.db import upsert_articles
