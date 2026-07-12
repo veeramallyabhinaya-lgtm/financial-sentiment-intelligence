@@ -86,6 +86,10 @@ def main():
     if not args.dry_run:
         from src.pipeline.signals import run_signal_detection
         signal_summary = run_signal_detection()
+
+        from src.notify.telegram import notify_signals
+        notify_signals(signal_summary)
+        
         sr = len(signal_summary.get("sector_reversals", []))
         cs = len(signal_summary.get("company_spikes", []))
         logger.info("Signals: %d sector reversals, %d company spikes.", sr, cs)
